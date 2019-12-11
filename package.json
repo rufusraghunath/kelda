@@ -1,0 +1,62 @@
+{
+  "name": "kelda-js",
+  "version": "1.0.0",
+  "author": "Rufus Raghunath",
+  "description": "Thread pool abstraction on top of web workers.",
+  "main": "index.ts",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rufusraghunath/kelda.git"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rufusraghunath/kelda/issues"
+  },
+  "homepage": "https://github.com/rufusraghunath/kelda#readme",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "npm run lint && npm run prettier && jest --config jestconfig.json && webpack --mode=production && npm run copy-types",
+    "test": "jest --config jestconfig.json --watch",
+    "prettier:base": "prettier --parser typescript",
+    "prettier": "npm run prettier:base -- --list-different \"src/**/*.ts\"",
+    "prettier:fix": "npm run prettier:base -- --loglevel warn --write \"src/**/*.ts\"",
+    "lint": "npx eslint 'src/**/*.ts' -c ./eslintconfig.json",
+    "lint:fix": "npm run lint -- --fix",
+    "copy-types": "echo \"Script copy-types needs implementation in package.json\" && echo \"E.g.: 'cp src/index.d.ts dist'\n\""
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run build"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run prettier:fix",
+      "npm run lint:fix",
+      "git add"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.19",
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "jest-cli": "^24.9.0",
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.1.0",
+    "ts-loader": "^6.2.0",
+    "typescript": "^3.6.3",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  }
+}
