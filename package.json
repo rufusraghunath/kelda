@@ -9,7 +9,16 @@
     "type": "git",
     "url": "git+https://github.com/rufusraghunath/kelda.git"
   },
-  "keywords": [],
+  "keywords": [
+    "web workers",
+    "workers",
+    "thread",
+    "threadpool",
+    "thread pool",
+    "threading",
+    "performance",
+    "javascript"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rufusraghunath/kelda/issues"
