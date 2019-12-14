@@ -14,7 +14,7 @@ describe("SyncJob", () => {
 
   it("does asynchronous work in the main JS thread", async () => {
     const asyncWork = () =>
-      new Promise(resolve => setTimeout(() => resolve(2), 500));
+      new Promise(resolve => setTimeout(() => resolve(2), 100));
     const job = new MainThreadJob(asyncWork);
     const result = await job.execute();
 
