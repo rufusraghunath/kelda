@@ -3,7 +3,16 @@ import MainThreadJob from "./MainThreadJob";
 class Kelda {
   private JobConstructor: JobConstructor;
 
-  constructor() {
+  private static validateThreadPoolDepth(threadPoolDepth: number) {
+    if (threadPoolDepth <= 0)
+      throw new Error(
+        "Error constructing Kelda: threadPoolDepth must be greater than 0"
+      );
+  }
+
+  constructor(threadPoolDepth: number = 1) {
+    Kelda.validateThreadPoolDepth(threadPoolDepth);
+
     this.JobConstructor = MainThreadJob;
   }
 

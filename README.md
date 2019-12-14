@@ -15,8 +15,8 @@ import longRunningCalculation from "./longRunningCalculation";
 
 const threadPoolDepth = 3;
 const kelda = new Kelda(threadPoolDepth);
+// Up to three jobs can be performed at once sice a threadPoolDepth of 3 was specified.
 
 const result = await kelda.orderWork(longRunningCalculation);
 // longRunningCalculation runs in a Web Worker if available and in the main thread if not.
-// Up to three jobs can be performed at once sice a threadPoolDepth of 3 was specified.
 ```
