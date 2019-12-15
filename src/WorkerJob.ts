@@ -14,10 +14,16 @@ interface KeldaWorkerMessage {
 }
 
 class WorkerJob implements Job {
-  private work: Work;
   public isDone: boolean = false;
+  private work: Work;
 
   constructor(work: Work) {
+    /*
+      Note that Worker construction does *not* happen here.
+      A new Worker is only created when .execute() is called.
+      This allows Kelda to queue work efficiently by keeping as many
+      Worker threads as possible available at any given time.
+    */
     this.work = work;
   }
 

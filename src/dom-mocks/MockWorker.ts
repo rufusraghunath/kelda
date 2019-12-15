@@ -11,6 +11,7 @@ interface InnerWorkerScope {
 // TODO:  Can I use some Node magic to actually run this work
 //        on a separate thread for simulation purposes?
 class MockWorker implements Worker {
+  private static shouldFailNextConstruction: boolean = false;
   public onmessage: any;
   public onerror: any;
   private innerScope: InnerWorkerScope = {
@@ -25,7 +26,20 @@ class MockWorker implements Worker {
     }
   };
 
+  public static failNextConstruction() {
+    MockWorker.shouldFailNextConstruction = true;
+  }
+
+  private static throwIfNeeded() {
+    if (MockWorker.shouldFailNextConstruction) {
+      MockWorker.shouldFailNextConstruction = false;
+      throw new Error("Worker initialization failed!");
+    }
+  }
+
   constructor(objectUrl: string) {
+    MockWorker.throwIfNeeded();
+
     const mockBlob = mockFetchFromObjectUrl(objectUrl);
     const stringifiedJs = mockBlob.getScript();
 
