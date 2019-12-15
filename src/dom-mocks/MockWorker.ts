@@ -39,7 +39,8 @@ class MockWorker implements Worker {
   }
 
   public postMessage(message: Event) {
-    this.innerScope.onmessage(message);
+    // This simulates the asynchronicity of running in a different thread using setTimeout
+    setTimeout(() => this.innerScope.onmessage(message), 10);
   }
 
   public addEventListener(eventType: string, handler: EventHandler) {

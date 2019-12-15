@@ -33,4 +33,8 @@ describe("WorkerJob", () => {
   xit("starting work should be idempotent", () => {
     //
   });
+
+  xit("sets 'isDone' to true after completing work", () => {
+    //
+  });
 });

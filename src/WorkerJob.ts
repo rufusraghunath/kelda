@@ -20,7 +20,7 @@ class WorkerJob implements Job {
 
   public execute(): Promise<any> {
     const resultPromise = this.doInWorker();
-    this.isDone = true;
+    this.isDone = true; // TODO: needs to happen in .then and .catch
 
     return resultPromise;
   }
