@@ -1,4 +1,3 @@
-// Should be renamed to MainThreadJob or UiRuntimeJob?
 class MainThreadJob implements Job {
   private work: Work;
   public isDone: boolean = false;
