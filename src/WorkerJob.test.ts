@@ -1,4 +1,6 @@
 import WorkerJob from "./WorkerJob";
+import MockBlob from "./dom-mocks/MockBlob";
+import MockURL from "./dom-mocks/MockURL";
 import MockWorker from "./dom-mocks/MockWorker";
 
 describe("WorkerJob", () => {
@@ -7,6 +9,8 @@ describe("WorkerJob", () => {
   // Need to assert interactions with Worker API?
 
   window.Worker = MockWorker as any;
+  window.URL = MockURL as any;
+  window.Blob = MockBlob as any;
 
   it("should schedule work on a Web Worker", async () => {
     const job = new WorkerJob(syncWork);

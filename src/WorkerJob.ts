@@ -55,14 +55,10 @@ class WorkerJob implements Job {
 
   private getWorkerUrl(): string {
     const script = this.getWorkerScript();
+    const blob = new Blob([script], { type: "text/javascript" });
+    const url = URL.createObjectURL(blob);
 
-    // const blob = new Blob([script], {
-    //   type: "text/javascript"
-    // });
-
-    // const url = URL.createObjectURL(blob);
-
-    return script;
+    return url;
   }
 
   private getWorkerScript(): string {

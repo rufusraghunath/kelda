@@ -2,7 +2,12 @@
   "preset": "ts-jest",
   "testRegex": "test\\.ts?$",
   "moduleFileExtensions": ["ts", "js", "json", "node"],
-  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "src/**/*.{ts,js}",
+    "!src/index.ts",
+    "!src/dom-mocks/**/*",
+    "!src/**/*.d.ts"
+  ],
   "coverageThreshold": {
     "global": {
       "branches": 90,

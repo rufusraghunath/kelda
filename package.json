@@ -26,7 +26,7 @@
   "homepage": "https://github.com/rufusraghunath/kelda#readme",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "npm run lint && npm run prettier && jest --config jestconfig.json && webpack --mode=production && npm run copy-types",
+    "build": "npm run lint && npm run prettier && jest --config jestconfig.json --coverage && webpack --mode=production && npm run copy-types",
     "test": "jest --config jestconfig.json --watch",
     "prettier:base": "prettier --parser typescript",
     "prettier": "npm run prettier:base -- --list-different \"src/**/*.ts\"",
@@ -52,6 +52,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@types/jest": "^24.0.19",
+    "@types/uuid": "^3.4.6",
     "@typescript-eslint/eslint-plugin": "^2.4.0",
     "@typescript-eslint/parser": "^2.4.0",
     "eslint": "^6.5.1",
@@ -66,6 +67,7 @@
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.2.0",
     "typescript": "^3.6.3",
+    "uuid": "^3.3.3",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   }

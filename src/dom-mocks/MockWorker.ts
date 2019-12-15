@@ -1,3 +1,5 @@
+import { mockFetchFromObjectUrl } from "./MockURL";
+
 type EventHandler = (e: Event) => void;
 
 interface InnerWorkerScope {
@@ -24,7 +26,9 @@ class MockWorker implements Worker {
   };
 
   constructor(objectUrl: string) {
-    const stringifiedJs = objectUrl; // need to get script from URL first
+    const mockBlob = mockFetchFromObjectUrl(objectUrl);
+    const stringifiedJs = mockBlob.getScript();
+
     this.initInsideScope(stringifiedJs);
   }
 
