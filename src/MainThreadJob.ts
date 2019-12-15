@@ -8,7 +8,7 @@ class MainThreadJob implements Job {
 
   public execute(): Promise<any> {
     const result = this.work();
-    this.isDone = true;
+    this.isDone = true; // TODO: still needs to happen when work throws
 
     return Promise.resolve(result);
   }

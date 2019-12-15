@@ -1,3 +1,6 @@
+type Resolve = (result?: any) => void;
+type Reject = (error?: Error) => void;
+
 enum KeldaWorkerEventTypes {
   START = "$$_KELDA_START",
   DONE = "$$_KELDA_DONE",
@@ -19,36 +22,51 @@ class WorkerJob implements Job {
   }
 
   public execute(): Promise<any> {
-    const resultPromise = this.doInWorker();
+    const result = this.getWorkPromise();
     this.isDone = true; // TODO: needs to happen in .then and .catch
 
-    return resultPromise;
+    return result;
   }
 
-  private doInWorker(): Promise<any> {
+  private getWorkPromise(): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        const url = this.getWorkerUrl();
-        const worker = new Worker(url);
-
-        worker.addEventListener("message", e => {
-          const { type, result, error } = e.data as KeldaWorkerMessage;
-
-          switch (type) {
-            case KeldaWorkerEventTypes.DONE: {
-              resolve(result);
-              break;
-            }
-            case KeldaWorkerEventTypes.ERROR: {
-              reject(error);
-              break;
-            }
-          }
-        });
-
-        worker.postMessage(KeldaWorkerEventTypes.START);
+        this.doWorkInWorker(resolve, reject);
       } catch (e) {
         reject(e);
+      }
+    });
+  }
+
+  private doWorkInWorker(resolve: Resolve, reject: Reject): void {
+    const url = this.getWorkerUrl();
+    const worker = new Worker(url);
+
+    this.initWorkerMessageHandling(worker, resolve, reject);
+    this.startWork(worker);
+  }
+
+  private startWork(worker: Worker): void {
+    worker.postMessage(KeldaWorkerEventTypes.START);
+  }
+
+  private initWorkerMessageHandling(
+    worker: Worker,
+    resolve: Resolve,
+    reject: Reject
+  ): void {
+    worker.addEventListener("message", e => {
+      const { type, result, error } = e.data as KeldaWorkerMessage;
+
+      switch (type) {
+        case KeldaWorkerEventTypes.DONE: {
+          resolve(result);
+          break;
+        }
+        case KeldaWorkerEventTypes.ERROR: {
+          reject(error);
+          break;
+        }
       }
     });
   }
