@@ -19,7 +19,18 @@ describe("WorkerJob", () => {
     //
   });
 
-  xit("should reject when Worker an error is thrown while executing work", () => {
+  it("should reject when Worker an error is thrown while executing work", done => {
+    const errorWork = () => {
+      throw new Error("The work failed");
+    };
+
+    new WorkerJob(errorWork)
+      .execute()
+      .catch(e => expect(e).toEqual(new Error("The work failed")))
+      .then(done);
+  });
+
+  xit("starting work should be idempotent", () => {
     //
   });
 });

@@ -6,6 +6,8 @@ interface InnerWorkerScope {
   postMessage: (e: Event) => void;
 }
 
+// TODO:  Can I use some Node magic to actually run this work
+//        on a separate thread for simulation purposes?
 class MockWorker implements Worker {
   public onmessage: any;
   public onerror: any;
@@ -14,8 +16,10 @@ class MockWorker implements Worker {
     onmessage: () => {
       throw new Error("Error: onmessage should be overriden");
     },
-    postMessage(e) {
-      this.messageHandlers.forEach(handler => handler(e));
+    postMessage(message) {
+      this.messageHandlers.forEach(handler =>
+        handler({ data: message } as MessageEvent)
+      );
     }
   };
 
