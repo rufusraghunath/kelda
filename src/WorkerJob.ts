@@ -28,10 +28,7 @@ class WorkerJob implements Job {
   }
 
   public execute(): Promise<any> {
-    const result = this.getWorkPromise();
-    this.isDone = true; // TODO: needs to happen in .then and .catch
-
-    return result;
+    return this.getWorkPromise().finally(() => (this.isDone = true));
   }
 
   private getWorkPromise(): Promise<any> {

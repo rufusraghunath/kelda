@@ -5,6 +5,9 @@ import MockWorker from "./dom-mocks/MockWorker";
 
 describe("WorkerJob", () => {
   const work = () => 1 + 1;
+  const errorWork = () => {
+    throw new Error("The work failed");
+  };
 
   window.Worker = MockWorker as any;
   window.URL = MockURL as any;
@@ -28,12 +31,8 @@ describe("WorkerJob", () => {
   });
 
   it("should reject when Worker an error is thrown while executing work", async () => {
-    const errorWork = () => {
-      throw new Error("The work failed");
-    };
-
     try {
-      new WorkerJob(errorWork).execute();
+      await new WorkerJob(errorWork).execute();
     } catch (e) {
       expect(e).toEqual(new Error("The work failed"));
     }
@@ -43,7 +42,33 @@ describe("WorkerJob", () => {
     //
   });
 
-  xit("sets 'isDone' to true after completing work", () => {
-    //
+  it("sets 'isDone' to true after completing work", async () => {
+    const job = new WorkerJob(work);
+
+    expect(job.isDone).toBe(false);
+
+    const workPromise = job.execute();
+
+    expect(job.isDone).toBe(false);
+
+    await workPromise;
+
+    expect(job.isDone).toBe(true);
+  });
+
+  it("sets 'isDone' to true when failing to complete work", async () => {
+    const job = new WorkerJob(errorWork);
+
+    expect(job.isDone).toBe(false);
+
+    const workPromise = job.execute();
+
+    expect(job.isDone).toBe(false);
+
+    try {
+      await workPromise;
+    } catch (e) {
+      expect(job.isDone).toBe(true);
+    }
   });
 });
