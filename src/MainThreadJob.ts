@@ -7,6 +7,7 @@ class MainThreadJob implements Job {
   }
 
   public execute(): Promise<any> {
+    // TODO: Extract to tryInPromise?
     return new Promise((resolve, reject) => {
       try {
         const result = this.work();

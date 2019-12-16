@@ -9,7 +9,7 @@ enum KeldaWorkerEventTypes {
 
 interface KeldaWorkerMessage {
   type: KeldaWorkerEventTypes;
-  result: any; // TODO: can get rid of this?
+  result?: any; // TODO: can get rid of this?
   error?: Error;
 }
 
@@ -19,7 +19,7 @@ class WorkerJob implements Job {
 
   constructor(work: Work) {
     /*
-      Note that Worker construction does *not* happen here.
+      Note that Worker creation does *not* happen in the constructor.
       A new Worker is only created when .execute() is called.
       This allows Kelda to queue work efficiently by keeping as many
       Worker threads as possible available at any given time.
@@ -85,6 +85,7 @@ class WorkerJob implements Job {
   private getWorkerScript(): string {
     // TODO: find way to have this typechecked
     // TODO: use onerror for error handling instead?
+    // TODO: isDone flow is not yet tested
     return `
       let isDone = false;
       self.onmessage = message => {

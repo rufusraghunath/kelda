@@ -39,7 +39,7 @@ describe("WorkerJob", () => {
   });
 
   xit("starting work should be idempotent", () => {
-    //
+    // TODO: how to test this?
   });
 
   it("sets 'isDone' to true after completing work", async () => {
