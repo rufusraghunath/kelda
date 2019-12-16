@@ -1,23 +1,25 @@
-import MainThreadJob from "./MainThreadJob";
+import JobFactory from "./job/JobFactory";
+
+interface KeldaOptions {
+  threadPoolDepth: number;
+}
+
+const defaultOptions = {
+  threadPoolDepth: 1
+};
 
 class Kelda {
-  private JobConstructor: JobConstructor;
-
   private static validateThreadPoolDepth(threadPoolDepth: number) {
     if (threadPoolDepth <= 0)
-      throw new Error(
-        "Error constructing Kelda: threadPoolDepth must be greater than 0"
-      );
+      throw new Error("KeldaError: threadPoolDepth must be greater than 0");
   }
 
-  constructor(threadPoolDepth: number = 1) {
+  constructor({ threadPoolDepth }: KeldaOptions = defaultOptions) {
     Kelda.validateThreadPoolDepth(threadPoolDepth);
-
-    this.JobConstructor = MainThreadJob;
   }
 
   public orderWork(work: Work): Promise<any> {
-    const job = new this.JobConstructor(work); // Could extract to a JobFactory
+    const job = JobFactory.getJob(work);
 
     return job.execute();
   }

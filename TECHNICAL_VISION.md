@@ -66,3 +66,13 @@ Is there a point to a Worker generator? Could act like an actual coroutine.
 How to notify/throw errors to the developer when doing illegal operations in work passed to Workers (e.g. DOM access)?
 
 What about the arity of work? Should we ask users to wrap everything in a function with no args?
+
+How can we run the tests in a browser environment with real Workers available?
+
+What's the best way to run the tests against the built bundle before publishing?
+
+When Workers are unavailable:
+
+- Should fall back to .getIdleCallback?
+- Should space out the work?
+- Should respect the threadPoolDepth?

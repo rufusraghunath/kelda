@@ -1,7 +1,7 @@
 import WorkerJob from "./WorkerJob";
-import MockBlob from "./dom-mocks/MockBlob";
-import MockURL from "./dom-mocks/MockURL";
-import MockWorker from "./dom-mocks/MockWorker";
+import MockBlob from "../dom-mocks/MockBlob";
+import MockURL from "../dom-mocks/MockURL";
+import MockWorker from "../dom-mocks/MockWorker";
 
 describe("WorkerJob", () => {
   const work = () => 1 + 1;
@@ -36,6 +36,7 @@ describe("WorkerJob", () => {
     } catch (e) {
       expect(e).toEqual(new Error("The work failed"));
     }
+    // TODO: await expect(new WorkerJob(work).execute()).rejects.toEqual(new Error("The work failed"))
   });
 
   xit("starting work should be idempotent", () => {
