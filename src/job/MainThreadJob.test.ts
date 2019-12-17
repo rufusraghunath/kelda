@@ -24,7 +24,7 @@ describe("SyncJob", () => {
     expect(result).toBe(2);
   });
 
-  it("should reject when Worker an error is thrown while executing work", async () => {
+  it("should reject when an error is thrown while executing work", async () => {
     try {
       await new MainThreadJob(errorWork).execute();
     } catch (e) {
