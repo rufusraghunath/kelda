@@ -1,14 +1,8 @@
 import MainThreadJob from "../job/MainThreadJob";
 import Thread from "./Thread";
+import { work, oneSecondWork, errorWork } from "../util/testUtils";
 
 describe("Thread", () => {
-  const work = () => 1 + 1;
-  const errorWork = () => {
-    throw new Error("The work failed");
-  };
-  const oneSecondWork = () =>
-    new Promise(resolve => setTimeout(() => resolve(2), 1000));
-
   it("can execute sync Jobs", async () => {
     const thread = new Thread();
     const job = new MainThreadJob(work);

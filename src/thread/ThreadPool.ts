@@ -34,7 +34,7 @@ class ThreadPool {
     });
   }
 
-  private async doFromQueue() {
+  private doFromQueue() {
     const enqueued = this.queue.shift();
 
     if (enqueued) {

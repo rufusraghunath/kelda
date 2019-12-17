@@ -1,5 +1,6 @@
 import ThreadPool from "./ThreadPool";
 import MainThreadJob from "../job/MainThreadJob";
+import { work, oneSecondWork, flushPromises } from "../util/testUtils";
 
 describe("ThreadPool", () => {
   describe("validating", () => {
@@ -17,14 +18,6 @@ describe("ThreadPool", () => {
   });
 
   describe("scheduling Jobs", () => {
-    const work = () => 1 + 1;
-    const oneSecondWork = () =>
-      new Promise(resolve => setTimeout(() => resolve(2), 1000));
-    const flushPromises = () =>
-      new Promise(resolve => process.nextTick(resolve));
-    // https://stackoverflow.com/questions/52177631/jest-timer-and-promise-dont-work-well-settimeout-and-async-function
-    // https://plafer.github.io/2015/09/08/nextTick-vs-setImmediate/
-
     beforeEach(() => {
       jest.useFakeTimers();
     });

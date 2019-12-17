@@ -1,16 +1,8 @@
 import Kelda from "./Kelda";
-import MockWorker from "./dom-mocks/MockWorker";
-import MockBlob from "./dom-mocks/MockBlob";
-import MockURL from "./dom-mocks/MockURL";
+import { work, withoutWorkers } from "./util/testUtils";
 
 describe("Kelda", () => {
-  const work = () => 1 + 1;
-
   it("can take orders for work when Workers are available", async () => {
-    window.Worker = MockWorker as any;
-    window.Blob = MockBlob as any;
-    window.URL = MockURL as any;
-
     const kelda = new Kelda();
     const result = await kelda.orderWork(work);
 
@@ -18,9 +10,7 @@ describe("Kelda", () => {
   });
 
   it("can take orders for work when Workers are unavailable", async () => {
-    delete window.Worker;
-    delete window.Blob;
-    delete window.URL;
+    withoutWorkers();
 
     const kelda = new Kelda();
     const result = await kelda.orderWork(work);
@@ -29,10 +19,6 @@ describe("Kelda", () => {
   });
 
   it("can take multiple orders", async () => {
-    window.Worker = MockWorker as any;
-    window.Blob = MockBlob as any;
-    window.URL = MockURL as any;
-
     const kelda = new Kelda({ threadPoolDepth: 3 });
     const workPromises: Promise<any>[] = [];
 
