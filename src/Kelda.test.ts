@@ -3,10 +3,6 @@ import Kelda from "./Kelda";
 describe("Kelda", () => {
   const work = () => 1 + 1;
 
-  xit("sets sensible defaults if no options are specified", () => {
-    // TODO
-  });
-
   it("can take orders for work when Workers are available", async () => {
     const kelda = new Kelda();
     const result = await kelda.orderWork(work);
