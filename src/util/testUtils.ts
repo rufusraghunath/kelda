@@ -15,8 +15,10 @@ export const withoutWorkers = () => {
 };
 
 export const work = () => 1 + 1;
+
 export const oneSecondWork = () =>
   new Promise(resolve => setTimeout(() => resolve(2), 1000));
+
 export const errorWork = () => {
   throw new Error("The work failed");
 };

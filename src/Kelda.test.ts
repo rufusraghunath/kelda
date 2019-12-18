@@ -1,5 +1,6 @@
 import Kelda from "./Kelda";
-import { work, withoutWorkers } from "./util/testUtils";
+import { work, withoutWorkers, errorWork } from "./util/testUtils";
+import KeldaError from "./KeldaError";
 
 describe("Kelda", () => {
   it("can take orders for work when Workers are available", async () => {
@@ -28,6 +29,26 @@ describe("Kelda", () => {
 
     workPromises.forEach(
       async workPromise => await expect(workPromise).resolves.toBe(2)
+    );
+  });
+
+  it("propagates work errors as KeldaErrors", async () => {
+    const kelda = new Kelda();
+
+    await expect(kelda.orderWork(errorWork)).rejects.toEqual(
+      new KeldaError("The work failed")
+    );
+  });
+
+  it("sets a default error message when none is available", async () => {
+    const errorWorkWithoutMessage = () => {
+      throw new Error();
+    };
+
+    const kelda = new Kelda();
+
+    await expect(kelda.orderWork(errorWorkWithoutMessage)).rejects.toEqual(
+      new KeldaError("Something went wrong while processing work")
     );
   });
 });

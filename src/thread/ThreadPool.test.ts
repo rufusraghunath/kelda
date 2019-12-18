@@ -1,18 +1,19 @@
 import ThreadPool from "./ThreadPool";
 import MainThreadJob from "../job/MainThreadJob";
 import { work, oneSecondWork, flushPromises } from "../util/testUtils";
+import KeldaError from "../KeldaError";
 
 describe("ThreadPool", () => {
   describe("validating", () => {
     it("should throw if threadPoolDepth is 0", () => {
       expect(() => new ThreadPool(0)).toThrowError(
-        "KeldaError: threadPoolDepth must be greater than 0"
+        new KeldaError("threadPoolDepth must be greater than 0")
       );
     });
 
     it("should throw if threadPoolDepth is <0", () => {
       expect(() => new ThreadPool(-1)).toThrowError(
-        "KeldaError: threadPoolDepth must be greater than 0"
+        new KeldaError("threadPoolDepth must be greater than 0")
       );
     });
   });

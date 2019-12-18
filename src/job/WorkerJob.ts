@@ -1,6 +1,3 @@
-type Resolve = (result?: any) => void;
-type Reject = (error?: Error) => void;
-
 enum KeldaWorkerEventTypes {
   START = "$$_KELDA_START",
   DONE = "$$_KELDA_DONE",

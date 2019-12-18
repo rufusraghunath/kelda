@@ -1,14 +1,12 @@
 import Thread from "./Thread";
+import KeldaError from "../KeldaError";
 
-type Resolve = (result?: any) => void;
-type Reject = (error?: Error) => void;
 type EnqueuedJob = [Job, Resolve, Reject];
 
 class ThreadPool {
   private static validate(threadPoolDepth: number) {
     if (threadPoolDepth <= 0)
-      throw new Error("KeldaError: threadPoolDepth must be greater than 0");
-    // TODO: custom KeldaError class
+      throw new KeldaError("threadPoolDepth must be greater than 0");
   }
 
   private threads: Thread[];
