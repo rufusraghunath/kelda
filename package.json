@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "author": "Rufus Raghunath",
   "description": "Thread pool abstraction on top of web workers.",
-  "main": "index.ts",
+  "main": "dist/bundle.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
