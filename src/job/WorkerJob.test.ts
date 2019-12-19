@@ -84,11 +84,25 @@ describe("WorkerJob", () => {
     }
   });
 
-  xit("kills the Worker when the work is done", () => {
-    //
+  it("kills the Worker when the work is done", async () => {
+    const workPromise = new WorkerJob(work).execute();
+
+    expect(MockWorker.wasTerminated).toBe(false);
+
+    await workPromise;
+
+    expect(MockWorker.wasTerminated).toBe(true);
   });
 
-  xit("kills the Worker when the work has errored", () => {
-    //
+  it("kills the Worker when the work has errored", async () => {
+    const workPromise = new WorkerJob(work).execute();
+
+    expect(MockWorker.wasTerminated).toBe(false);
+
+    try {
+      await workPromise;
+    } catch (e) {
+      expect(MockWorker.wasTerminated).toBe(true);
+    }
   });
 });

@@ -12,7 +12,7 @@ interface KeldaWorkerMessage {
 
 class WorkerJob implements Job {
   public isDone: boolean = false;
-  // private worker: Worker = null;
+  private worker: Worker | null = null;
   private work: Work;
   private url: string;
 
@@ -35,9 +35,13 @@ class WorkerJob implements Job {
   private cleanUp() {
     this.isDone = true;
 
-    if (this.url) URL.revokeObjectURL(this.url);
+    if (this.url) {
+      URL.revokeObjectURL(this.url);
+    }
 
-    // kill worker
+    if (this.worker) {
+      this.worker.terminate();
+    }
   }
 
   private getWorkPromise(): Promise<any> {
@@ -51,35 +55,32 @@ class WorkerJob implements Job {
   }
 
   private doWorkInWorker(resolve: Resolve, reject: Reject): void {
-    const worker = new Worker(this.url);
+    this.worker = new Worker(this.url);
 
-    this.initWorkerMessageHandling(worker, resolve, reject);
-    this.startWork(worker);
+    this.initWorkerMessageHandling(resolve, reject);
+    this.startWork();
   }
 
-  private startWork(worker: Worker): void {
-    worker.postMessage(KeldaWorkerEventTypes.START);
+  private startWork(): void {
+    this.worker && this.worker.postMessage(KeldaWorkerEventTypes.START);
   }
 
-  private initWorkerMessageHandling(
-    worker: Worker,
-    resolve: Resolve,
-    reject: Reject
-  ): void {
-    worker.addEventListener("message", e => {
-      const { type, result, error } = e.data as KeldaWorkerMessage;
+  private initWorkerMessageHandling(resolve: Resolve, reject: Reject): void {
+    this.worker &&
+      this.worker.addEventListener("message", e => {
+        const { type, result, error } = e.data as KeldaWorkerMessage;
 
-      switch (type) {
-        case KeldaWorkerEventTypes.DONE: {
-          resolve(result);
-          break;
+        switch (type) {
+          case KeldaWorkerEventTypes.DONE: {
+            resolve(result);
+            break;
+          }
+          case KeldaWorkerEventTypes.ERROR: {
+            reject(error);
+            break;
+          }
         }
-        case KeldaWorkerEventTypes.ERROR: {
-          reject(error);
-          break;
-        }
-      }
-    });
+      });
   }
 
   private getWorkerUrl(): string {

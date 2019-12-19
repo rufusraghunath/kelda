@@ -11,6 +11,7 @@ interface InnerWorkerScope {
 // TODO:  Can I use some Node magic to actually run this work
 //        on a separate thread for simulation purposes?
 class MockWorker implements Worker {
+  public static wasTerminated: boolean = false;
   private static shouldFailNextConstruction: boolean = false;
   public onmessage: any;
   public onerror: any;
@@ -38,6 +39,7 @@ class MockWorker implements Worker {
   }
 
   constructor(objectUrl: string) {
+    MockWorker.wasTerminated = false;
     MockWorker.throwIfNeeded();
 
     const mockBlob = mockFetchFromObjectUrl(objectUrl);
@@ -68,7 +70,7 @@ class MockWorker implements Worker {
   }
 
   public terminate() {
-    throw new Error("Not implemented!");
+    MockWorker.wasTerminated = true;
   }
 
   public removeEventListener() {
