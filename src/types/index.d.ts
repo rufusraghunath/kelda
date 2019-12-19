@@ -6,7 +6,7 @@ declare module "kelda-js" {
   }
 
   class Kelda {
-    constructor(options: KeldaOptions);
+    constructor(options?: KeldaOptions);
 
     public orderWork(work: Work): Promise<any>;
   }
