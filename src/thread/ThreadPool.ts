@@ -1,5 +1,5 @@
 import Thread from "./Thread";
-import KeldaError from "../KeldaError";
+import KeldaError from "../kelda/KeldaError";
 
 type EnqueuedJob = [Job, Resolve, Reject];
 

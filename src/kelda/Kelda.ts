@@ -1,5 +1,5 @@
-import JobFactory from "./job/JobFactory";
-import ThreadPool from "./thread/ThreadPool";
+import JobFactory from "../job/JobFactory";
+import ThreadPool from "../thread/ThreadPool";
 import KeldaError from "./KeldaError";
 
 interface KeldaOptions {

@@ -1,7 +1,7 @@
 import ThreadPool from "./ThreadPool";
 import MainThreadJob from "../job/MainThreadJob";
 import { work, oneSecondWork, flushPromises } from "../util/testUtils";
-import KeldaError from "../KeldaError";
+import KeldaError from "../kelda/KeldaError";
 
 describe("ThreadPool", () => {
   describe("validating", () => {

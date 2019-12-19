@@ -1,3 +1,3 @@
-import Kelda from "./Kelda";
+import Kelda from "./kelda/Kelda";
 
 export default Kelda;

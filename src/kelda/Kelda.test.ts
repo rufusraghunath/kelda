@@ -1,5 +1,5 @@
 import Kelda from "./Kelda";
-import { work, withoutWorkers, errorWork } from "./util/testUtils";
+import { work, withoutWorkers, errorWork } from "../util/testUtils";
 import KeldaError from "./KeldaError";
 
 describe("Kelda", () => {

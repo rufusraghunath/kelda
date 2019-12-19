@@ -1,10 +1,12 @@
+/*
+  These tests are in a separate module because Jest makes it surprisingly hard
+  To mock a class constructor *only sometimes* in the same test file.
+*/
+
 import Kelda from "./Kelda";
-import ThreadPool from "./thread/ThreadPool";
+import ThreadPool from "../thread/ThreadPool";
 
-jest.mock("./thread/ThreadPool");
-
-// These tests are in a separate module because Jest makes it surprisingly hard
-// To mock a class constructor *only sometimes* in the same test file.
+jest.mock("../thread/ThreadPool");
 
 describe("Kelda options", () => {
   it("sets sensible defaults if no options are specified", () => {
