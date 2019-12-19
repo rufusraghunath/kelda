@@ -34,13 +34,14 @@ The biggest technical constraints is that functions and therefore their closures
 
 ## Domain:
 
-- Kelda (outside API, provides thread pool management)
-- Job (Interface - representation of ephemeral thread. A Worker is spun up, the Job is executed, the Worker is killed.)
-- AsyncJob implements Job (runs in Worker)
-- SyncJob implements Job (runs in main thread)
-- ScheduledJob implements Job (runs regularly in a Worker) - need sync vs async?
-
-Is it worth looking into a Thread abstraction? Would need to basically serialize/stringify functions to pass to persistent threads. Could work, and would allow us to save the Worker creation/destruction overhead. But would still need to solve the module problem.
+- `Kelda`: Outside API - receives Work, turns it into Jobs, and schedules them in the ThreadPool. Also provides top-level error handling.
+- `Work`: User-defined task to be carried out by Kelda
+- `Job`: interface - wrapper around user-provided work
+  - `WorkerJob`: Runs in a Worker
+  - `MainThreadJob`: Runs in main thread
+  - `ScheduledJob`: (Not implemented yet) Chron job - need Worker and main thread versions?
+- `ThreadPool`: Provides thread pool management and allows Jobs to be scheduled as threads become available
+- `Thread`: Representation of a "persistent" thread, which can execute one Job at a time
 
 ## Open questions/ideas
 
