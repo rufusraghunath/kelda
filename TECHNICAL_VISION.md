@@ -26,7 +26,7 @@ Workers do run on separate hardware threads, meaning that there is a hard limit 
 
 ## Technical constraints
 
-The biggest technical constraints is that functions and therefore their closures cannot be passed to an existing Worker. Instread, a Worker must be intialized with a script to execute, which runs in a separate context from the main thread (i.e. `new Worker(pointerToScript|dataUri|blob)`). This means that:
+The biggest technical constraints is that functions and therefore their closures cannot be passed to an existing Worker. Instead, a Worker must be initialized with a script to execute, which runs in a separate context from the main thread (i.e. `new Worker(pointerToScript|dataUri|blob)`). This means that:
 
 - Worker threads cannot be generic, reusable, or persistent (except in the case of cronjobs)
 - There is some performance overhead to creating and destroying Workers every time a job is requested
