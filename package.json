@@ -33,7 +33,7 @@
     "prettier:fix": "npm run prettier:base -- --loglevel warn --write \"src/**/*.ts\"",
     "lint": "npx eslint 'src/**/*.ts' -c ./eslintconfig.json",
     "lint:fix": "npm run lint -- --fix",
-    "copy-types": "echo \"Script copy-types needs implementation in package.json\" && echo \"E.g.: 'cp src/index.d.ts dist'\n\""
+    "copy-types": "cp src/types/index.d.ts dist"
   },
   "husky": {
     "hooks": {
