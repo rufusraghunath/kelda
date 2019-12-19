@@ -7,6 +7,8 @@ interface ObjectUrls {
 
 const urls: ObjectUrls = {};
 
+export const getActiveUrls = () => urls;
+
 const createObjectURL = (mockBlob: MockBlob) => {
   const id = uuid();
   const url = `blob:http://localhost/${id}`;
@@ -16,7 +18,9 @@ const createObjectURL = (mockBlob: MockBlob) => {
   return url;
 };
 
-const MockURL = { createObjectURL };
+const revokeObjectURL = jest.fn();
+
+const MockURL = { createObjectURL, revokeObjectURL };
 
 export default MockURL;
 

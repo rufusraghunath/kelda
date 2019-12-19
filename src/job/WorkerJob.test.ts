@@ -1,6 +1,7 @@
 import WorkerJob from "./WorkerJob";
 import MockWorker from "../dom-mocks/MockWorker";
 import { work, errorWork } from "../util/testUtils";
+import MockURL, { getActiveUrls } from "../dom-mocks/MockURL";
 
 describe("WorkerJob", () => {
   it("should schedule work on a Web Worker", async () => {
@@ -53,5 +54,41 @@ describe("WorkerJob", () => {
     } catch (e) {
       expect(job.isDone).toBe(true);
     }
+  });
+
+  it("revokes objectURL when work completes successfully", async () => {
+    const workPromise = new WorkerJob(work).execute();
+
+    expect(MockURL.revokeObjectURL).not.toHaveBeenCalled();
+
+    await workPromise;
+
+    const revokedUrl = MockURL.revokeObjectURL.mock.calls[0][0];
+    const activeUrls = Object.keys(getActiveUrls());
+
+    expect(activeUrls).toContain(revokedUrl);
+  });
+
+  it("revokes objectURL when work fails to complete successfully", async () => {
+    const workPromise = new WorkerJob(work).execute();
+
+    expect(MockURL.revokeObjectURL).not.toHaveBeenCalled();
+
+    try {
+      await workPromise;
+    } catch (e) {
+      const revokedUrl = MockURL.revokeObjectURL.mock.calls[0][0];
+      const activeUrls = Object.keys(getActiveUrls());
+
+      expect(activeUrls).toContain(revokedUrl);
+    }
+  });
+
+  xit("kills the Worker when the work is done", () => {
+    //
+  });
+
+  xit("kills the Worker when the work has errored", () => {
+    //
   });
 });

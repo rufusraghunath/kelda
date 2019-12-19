@@ -6,13 +6,15 @@ enum KeldaWorkerEventTypes {
 
 interface KeldaWorkerMessage {
   type: KeldaWorkerEventTypes;
-  result?: any; // TODO: can get rid of this?
+  result?: any; // TODO: can get rid of this any?
   error?: Error;
 }
 
 class WorkerJob implements Job {
   public isDone: boolean = false;
+  // private worker: Worker = null;
   private work: Work;
+  private url: string;
 
   constructor(work: Work) {
     /*
@@ -21,11 +23,21 @@ class WorkerJob implements Job {
       This allows Kelda to queue work efficiently by keeping as many
       Worker threads as possible available at any given time.
     */
+    this.cleanUp = this.cleanUp.bind(this);
     this.work = work;
+    this.url = this.getWorkerUrl();
   }
 
   public execute(): Promise<any> {
-    return this.getWorkPromise().finally(() => (this.isDone = true));
+    return this.getWorkPromise().finally(this.cleanUp);
+  }
+
+  private cleanUp() {
+    this.isDone = true;
+
+    if (this.url) URL.revokeObjectURL(this.url);
+
+    // kill worker
   }
 
   private getWorkPromise(): Promise<any> {
@@ -39,8 +51,7 @@ class WorkerJob implements Job {
   }
 
   private doWorkInWorker(resolve: Resolve, reject: Reject): void {
-    const url = this.getWorkerUrl();
-    const worker = new Worker(url);
+    const worker = new Worker(this.url);
 
     this.initWorkerMessageHandling(worker, resolve, reject);
     this.startWork(worker);
