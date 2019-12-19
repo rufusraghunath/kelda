@@ -9,8 +9,8 @@ class MockBlob implements Blob {
   public type = "MockBlob";
   private script: string;
 
-  constructor(scriptParts: string[], options: BlobOptions) {
-    if (!options || options.type !== "text/javascript") {
+  constructor(scriptParts: string[], options?: BlobOptions) {
+    if (options?.type !== "text/javascript") {
       throw new Error("MockBlob can only have type 'text/javascript'");
     }
     this.script = scriptParts[0];

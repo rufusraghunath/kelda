@@ -37,15 +37,12 @@ class ThreadPool {
 
     if (enqueued) {
       const [job, resolve, reject] = enqueued;
-      const thread = this.getThread();
 
-      if (thread) {
-        thread
-          .do(job)
-          .then(resolve)
-          .catch(reject)
-          .finally(this.doFromQueue);
-      }
+      this.getThread()
+        ?.do(job)
+        .then(resolve)
+        .catch(reject)
+        .finally(this.doFromQueue);
     }
   }
 

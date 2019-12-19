@@ -33,15 +33,11 @@ class WorkerJob implements Job {
   }
 
   private cleanUp() {
+    URL.revokeObjectURL(this.url);
+
+    this.worker?.terminate();
+
     this.isDone = true;
-
-    if (this.url) {
-      URL.revokeObjectURL(this.url);
-    }
-
-    if (this.worker) {
-      this.worker.terminate();
-    }
   }
 
   private getWorkPromise(): Promise<any> {
@@ -62,25 +58,24 @@ class WorkerJob implements Job {
   }
 
   private startWork(): void {
-    this.worker && this.worker.postMessage(KeldaWorkerEventTypes.START);
+    this.worker?.postMessage(KeldaWorkerEventTypes.START);
   }
 
   private initWorkerMessageHandling(resolve: Resolve, reject: Reject): void {
-    this.worker &&
-      this.worker.addEventListener("message", e => {
-        const { type, result, error } = e.data as KeldaWorkerMessage;
+    this.worker?.addEventListener("message", e => {
+      const { type, result, error } = e.data as KeldaWorkerMessage;
 
-        switch (type) {
-          case KeldaWorkerEventTypes.DONE: {
-            resolve(result);
-            break;
-          }
-          case KeldaWorkerEventTypes.ERROR: {
-            reject(error);
-            break;
-          }
+      switch (type) {
+        case KeldaWorkerEventTypes.DONE: {
+          resolve(result);
+          break;
         }
-      });
+        case KeldaWorkerEventTypes.ERROR: {
+          reject(error);
+          break;
+        }
+      }
+    });
   }
 
   private getWorkerUrl(): string {
