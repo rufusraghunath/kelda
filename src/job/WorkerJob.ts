@@ -87,30 +87,48 @@ class WorkerJob<T> implements Job<T> {
   }
 
   private getWorkerScript(): string {
-    // TODO: find way to have this typechecked
-    // TODO: use onerror for error handling instead?
+    // TODO: Test new version of this method
     // TODO: isDone flow is not yet tested
-    return `
+    // TODO: Rethrow DataCloneErrors with helpful hints about allowable return types of Work?
+    // TODO: Remove tsignores if possible
+    // TODO: Remove eslint-disables if possible
+    // TODO: Find way not to hardcode event types
+
+    // This fools Typescript into believing that the variable 'work' is defined in the scope of init.
+    // In fact, work is stringified and concatenated with init in the worker script.
+    // Could pass work as an arg to init to avoid this
+    const work = this.work;
+
+    /* eslint-disable require-atomic-updates, no-restricted-globals */
+
+    const init = () => {
       let isDone = false;
-      self.onmessage = message => {
-        if(!isDone && message === "${KeldaWorkerEventTypes.START}") {
-          try{
-            const result = (${this.work}).call(null);
+      //@ts-ignore:
+      self.onmessage = async message => {
+        if (!isDone && message.data?.type === "$$_KELDA_START") {
+          try {
+            // This await needs to be here in case work.call() returns a Promise
+            const result = await work.call(null);
+
+            //@ts-ignore:
             self.postMessage({
-              type: "${KeldaWorkerEventTypes.DONE}",
+              type: "$$_KELDA_DONE",
               result
             });
-          } catch(error) {
+          } catch (error) {
+            //@ts-ignore:
             self.postMessage({
-              type: "${KeldaWorkerEventTypes.ERROR}",
+              type: "$$_KELDA_ERROR",
               error
             });
           } finally {
             isDone = true;
           }
         }
-      }
-    `;
+      };
+    };
+
+    return `work=${this.work};(${init})()`;
   }
 }
 
