@@ -26,8 +26,10 @@
   "homepage": "https://github.com/rufusraghunath/kelda#readme",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "npm run lint && npm run prettier && jest --config jestconfig.json --coverage && webpack --mode=production && npm run copy-types",
+    "build": "npm run lint && npm run prettier && npm run test:coverage && npm run bundle && npm run copy-types",
+    "bundle": "webpack --mode=production",
     "test": "jest --config jestconfig.json --watch",
+    "test:coverage": "jest --config jestconfig.json --coverage",
     "prettier:base": "prettier --parser typescript",
     "prettier": "npm run prettier:base -- --list-different \"src/**/*.ts\"",
     "prettier:fix": "npm run prettier:base -- --loglevel warn --write \"src/**/*.ts\"",
