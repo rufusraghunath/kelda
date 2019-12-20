@@ -17,14 +17,13 @@ class Kelda {
     this.threadPool = new ThreadPool(threadPoolDepth);
   }
 
-  // TODO: can we change this to just Promise<T>? The .catch() is throwing it off.
-  public orderWork<T>(work: Work<T>): Promise<T | void> {
+  public orderWork<T>(work: Work<T>): Promise<T> {
     const job = JobFactory.getJob(work);
 
     return this.threadPool.schedule(job).catch(this.toKeldaError);
   }
 
-  private toKeldaError(e: Error) {
+  private toKeldaError(e: Error): never {
     const message = e.message || "Something went wrong while processing work";
 
     throw new KeldaError(message);

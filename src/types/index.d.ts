@@ -8,7 +8,7 @@ declare module "kelda-js" {
   class Kelda {
     constructor(options?: KeldaOptions);
 
-    public orderWork<T>(work: Work<T>): Promise<T | void>;
+    public orderWork<T>(work: Work<T>): Promise<T>;
   }
 
   export default Kelda;
