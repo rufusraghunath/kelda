@@ -13,8 +13,8 @@ Kelda is a thread pool abstraction on top of [Web Workers](https://developer.moz
 import Kelda from "kelda-js";
 import longRunningCalculation from "./longRunningCalculation";
 
-const threadPoolDepth = 3;
-const kelda = new Kelda(threadPoolDepth);
+const options = { threadPoolDepth: 3 };
+const kelda = new Kelda(options);
 // Up to three jobs can be performed at once since a threadPoolDepth of 3 was specified.
 
 const result = await kelda.orderWork(longRunningCalculation);
