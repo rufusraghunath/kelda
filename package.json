@@ -1,6 +1,6 @@
 {
   "name": "kelda-js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Rufus Raghunath",
   "description": "Thread pool abstraction on top of web workers.",
   "main": "dist/bundle.js",
