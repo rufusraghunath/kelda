@@ -1,12 +1,12 @@
 type Resolve = (result?: any) => void;
 type Reject = (error?: Error) => void;
-type Work = () => any; // TODO want Work<T> = () => T
+type Work<T> = () => T;
 
-interface Job {
+interface Job<T> {
   isDone: boolean;
-  execute: () => Promise<any>; // TODO: get rid of this any
+  execute: () => Promise<T>;
 }
 
 interface JobConstructor {
-  new (work: Work): Job;
+  new <T>(work: Work<T>): Job<T>;
 }

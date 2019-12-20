@@ -1,5 +1,5 @@
 declare module "kelda-js" {
-  type Work = () => any;
+  type Work<T> = () => T;
 
   interface KeldaOptions {
     threadPoolDepth: number;
@@ -8,7 +8,7 @@ declare module "kelda-js" {
   class Kelda {
     constructor(options?: KeldaOptions);
 
-    public orderWork(work: Work): Promise<any>;
+    public orderWork<T>(work: Work<T>): Promise<T | void>;
   }
 
   export default Kelda;

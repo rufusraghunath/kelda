@@ -17,7 +17,8 @@ class Kelda {
     this.threadPool = new ThreadPool(threadPoolDepth);
   }
 
-  public orderWork(work: Work): Promise<any> {
+  // TODO: can we change this to just Promise<T>? The .catch() is throwing it off.
+  public orderWork<T>(work: Work<T>): Promise<T | void> {
     const job = JobFactory.getJob(work);
 
     return this.threadPool.schedule(job).catch(this.toKeldaError);

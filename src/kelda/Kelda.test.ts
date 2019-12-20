@@ -21,7 +21,7 @@ describe("Kelda", () => {
 
   it("can take multiple orders", async () => {
     const kelda = new Kelda({ threadPoolDepth: 3 });
-    const workPromises: Promise<any>[] = [];
+    const workPromises: Promise<number>[] = [];
 
     Array(10)
       .fill(null)

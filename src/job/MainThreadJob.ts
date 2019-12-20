@@ -1,21 +1,21 @@
-class MainThreadJob implements Job {
-  private work: Work;
+class MainThreadJob<T> implements Job<T> {
+  private work: Work<T>;
   public isDone: boolean = false;
 
-  constructor(work: Work) {
+  constructor(work: Work<T>) {
     this.work = work;
   }
 
-  public execute(): Promise<any> {
+  public execute(): Promise<T> {
     // TODO: Extract to tryInPromise?
     return new Promise((resolve, reject) => {
       try {
-        const result = this.work();
+        const result: T = this.work();
         resolve(result);
       } catch (e) {
         reject(e);
       }
-    }).finally(() => (this.isDone = true));
+    }).finally(() => (this.isDone = true)) as Promise<T>;
   }
 }
 

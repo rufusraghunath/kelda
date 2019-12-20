@@ -4,19 +4,19 @@ enum KeldaWorkerEventTypes {
   ERROR = "$$_KELDA_ERROR"
 }
 
-interface KeldaWorkerMessage {
+interface KeldaWorkerMessage<T> {
   type: KeldaWorkerEventTypes;
-  result?: any; // TODO: can get rid of this any?
+  result?: T;
   error?: Error;
 }
 
-class WorkerJob implements Job {
+class WorkerJob<T> implements Job<T> {
   public isDone: boolean = false;
   private worker: Worker | null = null;
-  private work: Work;
+  private work: Work<T>;
   private url: string;
 
-  constructor(work: Work) {
+  constructor(work: Work<T>) {
     /*
       Note that Worker creation does *not* happen in the constructor.
       A new Worker is only created when .execute() is called.
@@ -28,7 +28,7 @@ class WorkerJob implements Job {
     this.url = this.getWorkerUrl();
   }
 
-  public execute(): Promise<any> {
+  public execute(): Promise<T> {
     return this.getWorkPromise().finally(this.cleanUp);
   }
 
@@ -40,7 +40,7 @@ class WorkerJob implements Job {
     this.isDone = true;
   }
 
-  private getWorkPromise(): Promise<any> {
+  private getWorkPromise(): Promise<T> {
     return new Promise((resolve, reject) => {
       try {
         this.doWorkInWorker(resolve, reject);
@@ -63,7 +63,7 @@ class WorkerJob implements Job {
 
   private initWorkerMessageHandling(resolve: Resolve, reject: Reject): void {
     this.worker?.addEventListener("message", e => {
-      const { type, result, error } = e.data as KeldaWorkerMessage;
+      const { type, result, error } = e.data as KeldaWorkerMessage<T>;
 
       switch (type) {
         case KeldaWorkerEventTypes.DONE: {

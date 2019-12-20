@@ -1,7 +1,7 @@
 import Thread from "./Thread";
 import KeldaError from "../kelda/KeldaError";
 
-type EnqueuedJob = [Job, Resolve, Reject];
+type EnqueuedJob<T> = [Job<T>, Resolve, Reject];
 
 class ThreadPool {
   private static validate(threadPoolDepth: number) {
@@ -10,7 +10,7 @@ class ThreadPool {
   }
 
   private threads: Thread[];
-  private queue: EnqueuedJob[] = [];
+  private queue: EnqueuedJob<any>[] = [];
 
   constructor(threadPoolDepth: number) {
     ThreadPool.validate(threadPoolDepth);
@@ -19,7 +19,7 @@ class ThreadPool {
     this.doFromQueue = this.doFromQueue.bind(this);
   }
 
-  public schedule(job: Job): Promise<any> {
+  public schedule<T>(job: Job<T>): Promise<T> {
     const thread = this.getThread();
 
     if (thread) {
@@ -27,7 +27,8 @@ class ThreadPool {
     }
 
     return new Promise((resolve, reject) => {
-      const toEnqueue: EnqueuedJob = [job, resolve, reject];
+      const toEnqueue: EnqueuedJob<T> = [job, resolve, reject];
+
       this.queue.push(toEnqueue);
     });
   }
