@@ -12,4 +12,8 @@ describe("KeldaError", () => {
   it("should have name KeldaError", () => {
     expect(new KeldaError("Oops").name).toBe("KeldaError");
   });
+
+  it("should stringify nicely", () => {
+    expect(new KeldaError("Oops").toString()).toBe("KeldaError: Oops");
+  });
 });
