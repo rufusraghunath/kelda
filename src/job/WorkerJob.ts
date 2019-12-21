@@ -58,7 +58,7 @@ class WorkerJob<T> implements Job<T> {
   }
 
   private startWork(): void {
-    this.worker?.postMessage(KeldaWorkerEventTypes.START);
+    this.worker?.postMessage({ type: KeldaWorkerEventTypes.START });
   }
 
   private initWorkerMessageHandling(resolve: Resolve, reject: Reject): void {
@@ -104,11 +104,29 @@ class WorkerJob<T> implements Job<T> {
     const init = () => {
       let isDone = false;
       //@ts-ignore:
-      self.onmessage = async message => {
+      self.onmessage = message => {
         if (!isDone && message.data?.type === "$$_KELDA_START") {
           try {
-            // This await needs to be here in case work.call() returns a Promise
-            const result = await work.call(null);
+            // TODO: use await instead of 'result instanceof Promise'
+            // This is currently an issue as await transpiles to some
+            // TS helpers that don't exist in the MockWorker eval scope
+            const result = work.call(null);
+
+            if (result instanceof Promise) {
+              result.then(unwrappedResult => {
+                //@ts-ignore:
+                self.postMessage({
+                  type: "$$_KELDA_DONE",
+                  result: unwrappedResult
+                });
+              });
+            } else {
+              //@ts-ignore:
+              self.postMessage({
+                type: "$$_KELDA_DONE",
+                result
+              });
+            }
 
             //@ts-ignore:
             self.postMessage({

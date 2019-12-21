@@ -3,7 +3,7 @@ import MockWorker from "../dom-mocks/MockWorker";
 import { work, errorWork } from "../util/testUtils";
 import MockURL, { getActiveUrls } from "../dom-mocks/MockURL";
 
-xdescribe("WorkerJob", () => {
+describe("WorkerJob", () => {
   it("should schedule work on a Web Worker", async () => {
     const job = new WorkerJob(work);
     const result = await job.execute();
