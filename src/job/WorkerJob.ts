@@ -101,6 +101,8 @@ class WorkerJob<T> implements Job<T> {
 
     /* eslint-disable require-atomic-updates, no-restricted-globals */
 
+    // Coverage cannot be collected from the init function as it is stringified and eval'd
+    /* istanbul ignore next */
     const init = () => {
       let isDone = false;
       //@ts-ignore:
