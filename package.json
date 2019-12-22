@@ -3,8 +3,12 @@
   "version": "0.2.5",
   "author": "Rufus Raghunath",
   "description": "Thread pool abstraction on top of web workers.",
+  "license": "MIT",
   "main": "dist/bundle.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rufusraghunath/kelda.git"
@@ -19,7 +23,6 @@
     "performance",
     "javascript"
   ],
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/rufusraghunath/kelda/issues"
   },
