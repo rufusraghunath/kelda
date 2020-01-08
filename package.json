@@ -1,6 +1,6 @@
 {
   "name": "kelda-js",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "author": "Rufus Raghunath",
   "description": "Thread pool abstraction on top of web workers.",
   "license": "MIT",
