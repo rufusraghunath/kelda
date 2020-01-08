@@ -51,7 +51,6 @@ class MockWorker implements Worker {
   private initInsideScope(stringifiedJs: string) {
     const wrapped = `(function(){
       const self = this;
-      let work;
 
       ${stringifiedJs}
     })`;

@@ -94,16 +94,11 @@ class WorkerJob<T> implements Job<T> {
     // TODO: Remove eslint-disables if possible
     // TODO: Find way not to hardcode event types
 
-    // This fools Typescript into believing that the variable 'work' is defined in the scope of init.
-    // In fact, work is stringified and concatenated with init in the worker script.
-    // Could pass work as an arg to init to avoid this
-    const work = this.work;
-
     /* eslint-disable require-atomic-updates, no-restricted-globals */
 
     // Coverage cannot be collected from the init function as it is stringified and eval'd
     /* istanbul ignore next */
-    const init = () => {
+    const init = (work: Work<T>) => {
       let isDone = false;
       //@ts-ignore:
       self.onmessage = message => {
@@ -148,7 +143,7 @@ class WorkerJob<T> implements Job<T> {
       };
     };
 
-    return `work=${this.work};(${init})()`;
+    return `(${init})(${this.work})`;
   }
 }
 
