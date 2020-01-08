@@ -38,7 +38,10 @@
     "prettier:fix": "npm run prettier:base -- --loglevel warn --write \"src/**/*.ts\"",
     "lint": "npx eslint 'src/**/*.ts' -c ./eslintconfig.json",
     "lint:fix": "npm run lint -- --fix",
-    "copy-types": "cp src/types/index.d.ts dist"
+    "copy-types": "cp src/types/index.d.ts dist",
+    "local-registry": "verdaccio",
+    "local-registry:publish": "npm publish --registry http://localhost:4873",
+    "test-app": "cd test-app && npm run start"
   },
   "husky": {
     "hooks": {
@@ -73,6 +76,7 @@
     "ts-loader": "^6.2.0",
     "typescript": "^3.7.3",
     "uuid": "^3.3.3",
+    "verdaccio": "^4.4.1",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   }

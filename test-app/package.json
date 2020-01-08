@@ -1,0 +1,20 @@
+{
+  "name": "test-app",
+  "version": "1.0.0",
+  "description": "A web app for testing Kelda",
+  "main": "public/js/bundle.js",
+  "scripts": {
+    "bump-kelda": "npm i kelda-js@latest --registry http://localhost:4873",
+    "build": "webpack --mode=development",
+    "start": "npm run bump-kelda && npm run build && node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rufus Raghunath",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "kelda-js": "^0.3.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  }
+}

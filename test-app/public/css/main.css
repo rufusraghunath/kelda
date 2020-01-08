@@ -1,0 +1,9 @@
+* {
+  box-sizing: border-box;
+  font-family: "Open Sans";
+}
+
+body {
+  width: 100vw;
+  position: relative;
+}
