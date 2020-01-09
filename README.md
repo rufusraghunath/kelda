@@ -31,7 +31,7 @@ The next phase of development will address this limitation and attempt to provid
 
 ## Testing
 
-Kelda comes with a simple test web app to assist in local development. It makes use of Verdaccio, a local npm registry shim, so that release candidates can be tested in a browser environment before publishing.
+Kelda comes with a simple test web app to assist in local development. It makes use of [Verdaccio](https://github.com/verdaccio/verdaccio), a local npm registry shim, so that release candidates can be tested in a browser environment before publishing.
 
 To set up:
 

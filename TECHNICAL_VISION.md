@@ -31,6 +31,8 @@ The biggest technical constraints is that functions and therefore their closures
 - Worker threads cannot be generic, reusable, or persistent (except in the case of cronjobs)
 - There is some performance overhead to creating and destroying Workers every time a job is requested
 - Module resolution is a problem. Bundlers such as webpack cache imports into a global modules object at runtime rather than replacing every reference to a module with the entire module code at build time. This modules object is not available in the Worker context and thus imported modules are `undefined`. Naively, this means that you either have to have a separate build output for a Worker script which you then have to host on your server, or you have to write import-free functions for your Workers to run via dataUri/Blob. Neither approach would make for good DX for Kelda, so another solution must be found.
+- Variables that are out of scope of the work function cannot be referenced in the Worker context (this is really the same issue as the above). E.g. if I define a function `fibonacci` outside the scope of my work function, but my work function refers to `fibonacci`, then my work function will stringify to refer to `fibonacci` by name but won't have it available in the Worker
+- `bind` is an issue. This results in a stringification like `function () { [native code] }`, which of course can't be evaluated.
 
 ## Domain:
 

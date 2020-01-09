@@ -5,7 +5,29 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body>
-    Hello, world
+    <h1 class="title">Kelda Test App</h1>
+    <section class="timer">
+      <div class="seconds" id="seconds">0</div>
+      <div class="elapsed">
+        seconds elapsed
+      </div>
+      <button id="start">Start timer</button>
+      <button id="stop">Stop timer</button>
+    </section>
+    <section class="work">
+      <div class="execute">
+        Start the timer and then choose where to execute the work. It will try
+        to find the 45th fibonacci number using a non-optimized recursive
+        implementation. Note how the timer freezes when running the work in the
+        main thread.
+      </div>
+      <!-- Get fibonacci:
+      <select class="num" id="num"></select> -->
+      <div>Result:</div>
+      <div class="result" id="result">--</div>
+      <button id="main-thread">Main thread</button>
+      <button id="kelda">Kelda</button>
+    </section>
     <script src="/js/bundle.js"></script>
   </body>
 </html>

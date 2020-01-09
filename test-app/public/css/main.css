@@ -1,9 +1,34 @@
 * {
   box-sizing: border-box;
-  font-family: "Open Sans";
+  font-family: "Open Sans", sans-serif;
 }
 
 body {
   width: 100vw;
   position: relative;
+  text-align: center;
+}
+
+.title {
+  text-align: left;
+  margin-bottom: 100px;
+}
+
+.timer {
+  margin-bottom: 50px;
+}
+
+.seconds,
+.result {
+  font-size: 40px;
+}
+
+.elapsed,
+.execute,
+.num {
+  margin-bottom: 30px;
+}
+
+.result {
+  margin-bottom: 15px;
 }
