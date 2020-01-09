@@ -25,7 +25,11 @@ const result = await kelda.orderWork(longRunningCalculation);
 
 ## Limitations
 
-Currently, Kelda can only take orders for simple functions that do not internally reference any module imports (no usage of `import` or `require`). This is because work will be executed in a separate Worker thread, which will have a separate context from the main thread (so no reference to modules provided by build tools such as webpack or rollup). In other words, any work provided to Kelda must be entirely self-contained. This, of course, represents a serious limitation for testing and maintainability of these functions, and Kelda should be considered in "beta" for the time being.
+Currently, Kelda can only take orders for simple functions that do not internally reference any variables outside of their own scope. This is because work will be executed in a separate Worker thread, which has a separate context from the main thread.
+
+This also means that module imports don't currently work if you use a bundler like webpack (no usage of `import` or `require`), as the Worker thread has no reference to the bundler module resolution object.
+
+In other words, any work provided to Kelda must be entirely self-contained. This, of course, represents a serious limitation for testing and maintainability of these functions, and Kelda should be considered in "alpha" for the time being.
 
 The next phase of development will address this limitation and attempt to provide a solution. At that point, Kelda will be bumped to the first stable release at 1.0.0.
 
