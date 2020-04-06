@@ -8,7 +8,8 @@
     "!src/index.ts",
     "!src/dom-mocks/**/*",
     "!src/util/testUtils.ts",
-    "!src/**/*.d.ts"
+    "!src/**/*.d.ts",
+    "!src/kelda/testScript.js"
   ],
   "coverageThreshold": {
     "global": {
