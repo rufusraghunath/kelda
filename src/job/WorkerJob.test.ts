@@ -1,27 +1,27 @@
-import WorkerJob from "./WorkerJob";
-import MockWorker from "../dom-mocks/MockWorker";
-import { work, errorWork } from "../util/testUtils";
-import MockURL, { getActiveUrls } from "../dom-mocks/MockURL";
+import WorkerJob from './WorkerJob';
+import MockWorker from '../dom-mocks/MockWorker';
+import { work, errorWork } from '../util/testUtils';
+import MockURL, { getActiveUrls } from '../dom-mocks/MockURL';
 
-describe("WorkerJob", () => {
-  it("should schedule work on a Web Worker", async () => {
+describe('WorkerJob', () => {
+  it('should schedule work on a Web Worker', async () => {
     const job = new WorkerJob(work);
     const result = await job.execute();
 
     expect(result).toBe(2);
   });
 
-  it("should reject when something goes wrong during Worker initialization", async () => {
+  it('should reject when something goes wrong during Worker initialization', async () => {
     MockWorker.failNextConstruction();
 
     await expect(new WorkerJob(work).execute()).rejects.toEqual(
-      new Error("Worker initialization failed!")
+      new Error('Worker initialization failed!')
     );
   });
 
-  it("should reject when Worker an error is thrown while executing work", async () => {
+  it('should reject when Worker an error is thrown while executing work', async () => {
     await expect(new WorkerJob(errorWork).execute()).rejects.toEqual(
-      new Error("The work failed")
+      new Error('The work failed')
     );
   });
 
@@ -50,13 +50,13 @@ describe("WorkerJob", () => {
 
     try {
       await workPromise;
-      throw new Error("Work should have failed!");
+      throw new Error('Work should have failed!');
     } catch (e) {
       expect(job.isDone).toBe(true);
     }
   });
 
-  it("revokes objectURL when work completes successfully", async () => {
+  it('revokes objectURL when work completes successfully', async () => {
     const workPromise = new WorkerJob(work).execute();
 
     expect(MockURL.revokeObjectURL).not.toHaveBeenCalled();
@@ -69,7 +69,7 @@ describe("WorkerJob", () => {
     expect(activeUrls).toContain(revokedUrl);
   });
 
-  it("revokes objectURL when work fails to complete successfully", async () => {
+  it('revokes objectURL when work fails to complete successfully', async () => {
     const workPromise = new WorkerJob(work).execute();
 
     expect(MockURL.revokeObjectURL).not.toHaveBeenCalled();
@@ -84,7 +84,7 @@ describe("WorkerJob", () => {
     }
   });
 
-  it("kills the Worker when the work is done", async () => {
+  it('kills the Worker when the work is done', async () => {
     const workPromise = new WorkerJob(work).execute();
 
     expect(MockWorker.wasTerminated).toBe(false);
@@ -94,7 +94,7 @@ describe("WorkerJob", () => {
     expect(MockWorker.wasTerminated).toBe(true);
   });
 
-  it("kills the Worker when the work has errored", async () => {
+  it('kills the Worker when the work has errored', async () => {
     const workPromise = new WorkerJob(work).execute();
 
     expect(MockWorker.wasTerminated).toBe(false);

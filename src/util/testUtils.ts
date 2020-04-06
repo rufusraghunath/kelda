@@ -1,6 +1,6 @@
-import MockWorker from "../dom-mocks/MockWorker";
-import MockURL from "../dom-mocks/MockURL";
-import MockBlob from "../dom-mocks/MockBlob";
+import MockWorker from '../dom-mocks/MockWorker';
+import MockURL from '../dom-mocks/MockURL';
+import MockBlob from '../dom-mocks/MockBlob';
 
 export const withWorkers = () => {
   window.Worker = MockWorker as any;
@@ -20,7 +20,7 @@ export const oneSecondWork = () =>
   new Promise(resolve => setTimeout(() => resolve(2), 1000));
 
 export const errorWork = () => {
-  throw new Error("The work failed");
+  throw new Error('The work failed');
 };
 
 export const flushPromises = () =>

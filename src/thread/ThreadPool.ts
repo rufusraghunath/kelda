@@ -1,12 +1,13 @@
-import Thread from "./Thread";
-import KeldaError from "../kelda/KeldaError";
+import Thread from './Thread';
+import KeldaError from '../kelda/KeldaError';
 
 type EnqueuedJob<T> = [Job<T>, Resolve, Reject];
 
 class ThreadPool {
   private static validate(threadPoolDepth: number) {
+    // TODO: should throw if desired depth is greater than navigator.hardwareConcurrency?
     if (threadPoolDepth <= 0)
-      throw new KeldaError("threadPoolDepth must be greater than 0");
+      throw new KeldaError('threadPoolDepth must be greater than 0');
   }
 
   private threads: Thread[];
@@ -35,6 +36,7 @@ class ThreadPool {
 
   private doFromQueue() {
     const enqueued = this.queue.shift();
+    // this currently gets lost if there's no thread available. Should go through .schedule instead.
 
     if (enqueued) {
       const [job, resolve, reject] = enqueued;
@@ -42,7 +44,7 @@ class ThreadPool {
       this.getThread()
         ?.do(job)
         .then(resolve)
-        .catch(reject)
+        .catch(reject) // TODO: should re-enqueue/retry on failure? How many times?
         .finally(this.doFromQueue);
     }
   }

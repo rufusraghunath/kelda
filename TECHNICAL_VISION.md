@@ -4,18 +4,18 @@ This document captures the goals and architectural approach of the Kelda project
 
 ## Goal
 
-The purpose of the Kelda project is to provide a managed threadpool abstraction for the browser. It tries to use Web Workers under the hood, and falls back to synchronous computation when this is not possible (although Workers are well-supported by browsers at this point).
+The purpose of the Kelda project is to provide a managed threadpool abstraction for the browser. It tries to use Web Workers under the hood, and falls back to computation in the main thread when this is not possible (although Workers are well-supported by browsers at this point).
 
 One or two similar solutions have been attempted (e.g. [fibrelite](https://github.com/jameslmilner/fibrelite)), but these fall short of being satisfactory because they provide too few features to be truly useful, and because they fail to solve the technical constraints (see below) inherent in Workers. For example, fibrelite:
 
 - Is an abstraction over a single operation, so it cannot manage your entire Worker pool for you (it is possible to call `new Fibrelite(myFunction, threadPoolDepth).execute(args)` too many times and deplete the thread pool, leading to Bad Things).
-- Assumes the function passed to it can simply be stringified and turned into a data URI (this is false when using a JS bundler like webpack to resolve module imports)
+- Assumes the function passed to it can simply be stringified and turned into a data URI (this is false if the function references variables outside its own scope, including references to modules bundled with webpack & co)
 - Does not provide any functionality beyond the ability to schedule individual function calls on Worker threads
 
 Kelda aims to overcome these shortcomings by providing:
 
 - A global abstraction over Worker threads, thereby guaranteeing that the desired thread pool depth can never be exceeded at any given time
-- Either solving the module resolution issue or providing a satisfactory workaround for bundler users
+- Solving the module resolution issue or providing a satisfactory workaround for bundler users
 - Opt-in extensions, such as out-of-the box performance profiling that would allow developers to immediately gain insight into the tradeoffs of using Kelda for any given operation (Kelda could even potentially decide by itself which operations to move to Workers without the developer having to know about it)
 
 ## Technical background
@@ -79,3 +79,43 @@ When Workers are unavailable:
 - Should fall back to .getIdleCallback?
 - Should space out the work?
 - Should respect the threadPoolDepth?
+
+## NEW API
+
+```js
+const kelda = new Kelda();
+const id1 = await kelda.load('path/to/script'); // Must await loading of script; may throw now
+const id2 = kelda.lazy('path/to/script'); // No await needed, but may throw later
+
+await kelda.orderWork(() => 1 + 1); // When function, treat function as work and return result
+await kelda.orderWork('path/to/script'); // When string, treat as path to script - load and return result
+await kelda.orderWork(id1); // When number, treat as existing workId. Execute work for id and return result. Throw if invalid.
+await kelda.orderWith(id2, arg1, arg2); // If other args are passed, apply them to work function and return results
+
+/*
+  Not the nicest API, as you still have to expose work scripts yourself, but it may be the best we can do
+  Benefits:
+  - Abstract away Worker API
+  - Have easily reusable multithreaded work
+  - Central control of thread pool size
+
+
+  Kelda internally keeps map of workId => work function, so it can call the appropriate work function for an id
+  If an id is not present in the map, throw `KeldaError: Invalid work id`
+
+  Work scripts:
+  - Must return the function that represents the work
+  - Must be completely self-contained (i.e. should be bundled as its own build output)
+  - Side effects???
+  - Can only take basic types as args (string, number, bool, object). No functions.
+  - Can only return basic types
+
+
+  Questions:
+  - How to pass args to the script?
+  - How to deal with TS types for work args?
+  - Have to return top-level function from script?
+  - Using eval() vs Function()?
+  - How to load the script? Fetch? Need to polyfill? Otherwise XHR? https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+*/
+```

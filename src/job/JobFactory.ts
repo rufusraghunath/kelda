@@ -1,5 +1,5 @@
-import MainThreadJob from "./MainThreadJob";
-import WorkerJob from "./WorkerJob";
+import MainThreadJob from './MainThreadJob';
+import WorkerJob from './WorkerJob';
 
 class JobFactory {
   public static getJob<T>(work: Work<T>): Job<T> {

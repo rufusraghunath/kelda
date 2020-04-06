@@ -1,4 +1,4 @@
-type BlobTypes = "text/javascript";
+type BlobTypes = 'text/javascript';
 
 interface BlobOptions {
   type: BlobTypes;
@@ -6,11 +6,11 @@ interface BlobOptions {
 
 class MockBlob implements Blob {
   public size = 0;
-  public type = "MockBlob";
+  public type = 'MockBlob';
   private script: string;
 
   constructor(scriptParts: string[], options?: BlobOptions) {
-    if (options?.type !== "text/javascript") {
+    if (options?.type !== 'text/javascript') {
       throw new Error("MockBlob can only have type 'text/javascript'");
     }
     this.script = scriptParts[0];
@@ -22,7 +22,7 @@ class MockBlob implements Blob {
   }
 
   public slice(): MockBlob {
-    throw new Error("Not implemented!");
+    throw new Error('Not implemented!');
   }
 }
 

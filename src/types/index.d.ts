@@ -1,4 +1,4 @@
-declare module "kelda-js" {
+declare module 'kelda-js' {
   type Work<T> = () => T;
 
   interface KeldaOptions {
@@ -8,7 +8,7 @@ declare module "kelda-js" {
   class Kelda {
     constructor(options?: KeldaOptions);
 
-    public orderWork<T>(work: Work<T>): Promise<T>;
+    public orderWork<T>(source: Work<T> | string): Promise<T>;
   }
 
   export default Kelda;

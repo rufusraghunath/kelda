@@ -1,14 +1,23 @@
-enum KeldaWorkerEventTypes {
-  START = "$$_KELDA_START",
-  DONE = "$$_KELDA_DONE",
-  ERROR = "$$_KELDA_ERROR"
+enum KeldaWorkerEvent {
+  START = '$$_KELDA_START',
+  DONE = '$$_KELDA_DONE',
+  ERROR = '$$_KELDA_ERROR'
 }
 
 interface KeldaWorkerMessage<T> {
-  type: KeldaWorkerEventTypes;
+  type: KeldaWorkerEvent;
   result?: T;
   error?: Error;
 }
+
+// THOUGHTS
+// - Can I pass a string as an arg instead, which points to the module containing the work?
+// - Could we expose a Worker wrapper (called "KeldaWork"?) that would remove all the need for hand-rolling the communication bit?
+//   Then we could still take advantage of things like the worker-loader on the client's end
+//   Really, one of the issues is that I don't want the user to have to deal with an extra bundle for the Worker
+//   https://github.com/webpack-contrib/worker-loader
+//   https://github.com/borisirota/webworkify-webpack
+//   https://github.com/danderson00/webpack-worker
 
 class WorkerJob<T> implements Job<T> {
   public isDone: boolean = false;
@@ -25,7 +34,7 @@ class WorkerJob<T> implements Job<T> {
     */
     this.cleanUp = this.cleanUp.bind(this);
     this.work = work;
-    this.url = this.getWorkerUrl();
+    this.url = this.getWorkerUrl(); // TODO: Should only get called on .execute()
   }
 
   public execute(): Promise<T> {
@@ -58,19 +67,19 @@ class WorkerJob<T> implements Job<T> {
   }
 
   private startWork(): void {
-    this.worker?.postMessage({ type: KeldaWorkerEventTypes.START });
+    this.worker?.postMessage({ type: KeldaWorkerEvent.START });
   }
 
   private initWorkerMessageHandling(resolve: Resolve, reject: Reject): void {
-    this.worker?.addEventListener("message", e => {
+    this.worker?.addEventListener('message', e => {
       const { type, result, error } = e.data as KeldaWorkerMessage<T>;
 
       switch (type) {
-        case KeldaWorkerEventTypes.DONE: {
+        case KeldaWorkerEvent.DONE: {
           resolve(result);
           break;
         }
-        case KeldaWorkerEventTypes.ERROR: {
+        case KeldaWorkerEvent.ERROR: {
           reject(error);
           break;
         }
@@ -80,7 +89,7 @@ class WorkerJob<T> implements Job<T> {
 
   private getWorkerUrl(): string {
     const script = this.getWorkerScript();
-    const blob = new Blob([script], { type: "text/javascript" });
+    const blob = new Blob([script], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);
 
     return url;
@@ -102,38 +111,40 @@ class WorkerJob<T> implements Job<T> {
       let isDone = false;
       //@ts-ignore:
       self.onmessage = message => {
-        if (!isDone && message.data?.type === "$$_KELDA_START") {
+        if (!isDone && message.data?.type === '$$_KELDA_START') {
           try {
             // TODO: use await instead of 'result instanceof Promise'
             // This is currently an issue as await transpiles to some
             // TS helpers that don't exist in the MockWorker eval scope
+            //@ts-ignore:
+
             const result = work.call(null);
 
             if (result instanceof Promise) {
               result.then(unwrappedResult => {
                 //@ts-ignore:
                 self.postMessage({
-                  type: "$$_KELDA_DONE",
+                  type: '$$_KELDA_DONE',
                   result: unwrappedResult
                 });
               });
             } else {
               //@ts-ignore:
               self.postMessage({
-                type: "$$_KELDA_DONE",
+                type: '$$_KELDA_DONE',
                 result
               });
             }
 
             //@ts-ignore:
             self.postMessage({
-              type: "$$_KELDA_DONE",
+              type: '$$_KELDA_DONE',
               result
             });
           } catch (error) {
             //@ts-ignore:
             self.postMessage({
-              type: "$$_KELDA_ERROR",
+              type: '$$_KELDA_ERROR',
               error
             });
           } finally {

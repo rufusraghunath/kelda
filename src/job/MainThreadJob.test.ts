@@ -1,33 +1,33 @@
-import MainThreadJob from "./MainThreadJob";
+import MainThreadJob from './MainThreadJob';
 import {
   oneSecondWork,
   work,
   errorWork,
   withoutWorkers
-} from "../util/testUtils";
+} from '../util/testUtils';
 
-describe("SyncJob", () => {
+describe('SyncJob', () => {
   beforeEach(() => {
     withoutWorkers();
   });
 
-  it("does synchronous work in the main JS thread", async () => {
+  it('does synchronous work in the main JS thread', async () => {
     const job = new MainThreadJob(work);
     const result = await job.execute();
 
     expect(result).toBe(2);
   });
 
-  it("does asynchronous work in the main JS thread", async () => {
+  it('does asynchronous work in the main JS thread', async () => {
     const job = new MainThreadJob(oneSecondWork);
     const result = await job.execute();
 
     expect(result).toBe(2);
   });
 
-  it("should reject when an error is thrown while executing work", async () => {
+  it('should reject when an error is thrown while executing work', async () => {
     await expect(new MainThreadJob(errorWork).execute()).rejects.toEqual(
-      new Error("The work failed")
+      new Error('The work failed')
     );
   });
 
@@ -48,7 +48,7 @@ describe("SyncJob", () => {
 
     try {
       await job.execute();
-      throw new Error("The work should have failed!");
+      throw new Error('The work should have failed!');
     } catch (e) {
       expect(job.isDone).toBe(true);
     }

@@ -1,5 +1,5 @@
-import uuid from "uuid";
-import MockBlob from "./MockBlob";
+import uuid from 'uuid';
+import MockBlob from './MockBlob';
 
 interface ObjectUrls {
   [url: string]: MockBlob;

@@ -1,4 +1,4 @@
-import { mockFetchFromObjectUrl } from "./MockURL";
+import { mockFetchFromObjectUrl } from './MockURL';
 
 type EventHandler = (e: Event) => void;
 
@@ -18,7 +18,7 @@ class MockWorker implements Worker {
   private innerScope: InnerWorkerScope = {
     messageHandlers: [],
     onmessage: () => {
-      throw new Error("Error: onmessage should be overriden");
+      throw new Error('Error: onmessage should be overriden');
     },
     postMessage(message) {
       this.messageHandlers.forEach(handler =>
@@ -34,7 +34,7 @@ class MockWorker implements Worker {
   private static throwIfNeeded() {
     if (MockWorker.shouldFailNextConstruction) {
       MockWorker.shouldFailNextConstruction = false;
-      throw new Error("Worker initialization failed!");
+      throw new Error('Worker initialization failed!');
     }
   }
 
@@ -65,7 +65,7 @@ class MockWorker implements Worker {
   }
 
   public addEventListener(eventType: string, handler: EventHandler) {
-    if (eventType === "message") {
+    if (eventType === 'message') {
       this.innerScope.messageHandlers.push(handler);
     }
   }
@@ -75,11 +75,11 @@ class MockWorker implements Worker {
   }
 
   public removeEventListener() {
-    throw new Error("Not implemented!");
+    throw new Error('Not implemented!');
   }
 
   public dispatchEvent(): boolean {
-    throw new Error("Not implemented!");
+    throw new Error('Not implemented!');
   }
 }
 

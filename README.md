@@ -12,8 +12,8 @@ Kelda is a thread pool abstraction on top of [Web Workers](https://developer.moz
 To install, run `npm install kelda-js`.
 
 ```js
-import Kelda from "kelda-js";
-import longRunningCalculation from "./longRunningCalculation";
+import Kelda from 'kelda-js';
+import longRunningCalculation from './longRunningCalculation';
 
 const options = { threadPoolDepth: 3 };
 const kelda = new Kelda(options);

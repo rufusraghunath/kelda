@@ -1,27 +1,27 @@
-import MainThreadJob from "../job/MainThreadJob";
-import Thread from "./Thread";
-import { work, oneSecondWork, errorWork } from "../util/testUtils";
+import MainThreadJob from '../job/MainThreadJob';
+import Thread from './Thread';
+import { work, oneSecondWork, errorWork } from '../util/testUtils';
 
-describe("Thread", () => {
-  it("can execute sync Jobs", async () => {
+describe('Thread', () => {
+  it('can execute sync Jobs', async () => {
     const thread = new Thread();
     const job = new MainThreadJob(work);
 
     await expect(thread.do(job)).resolves.toBe(2);
   });
 
-  it("can execute async Jobs", async () => {
+  it('can execute async Jobs', async () => {
     const thread = new Thread();
     const job = new MainThreadJob(oneSecondWork);
 
     await expect(thread.do(job)).resolves.toBe(2);
   });
 
-  it("handles Job failures", async () => {
+  it('handles Job failures', async () => {
     const thread = new Thread();
     const job = new MainThreadJob(errorWork);
 
-    await expect(thread.do(job)).rejects.toEqual(new Error("The work failed"));
+    await expect(thread.do(job)).rejects.toEqual(new Error('The work failed'));
   });
 
   it("initially sets 'isIdle' to true", () => {
