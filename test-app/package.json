@@ -14,7 +14,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "kelda-js": "^0.3.0",
-    "webpack": "^4.41.5",
+    "webpack": "^4.42.1",
     "webpack-cli": "^3.3.10"
   }
 }
