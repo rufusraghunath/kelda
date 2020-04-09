@@ -78,37 +78,13 @@ describe('Kelda', () => {
       expect(result).toBe(30);
     });
 
-    it('throws when status is 400', async () => {
-      xhr.get(numberUrl, (_, res) => res.status(400));
-
-      const kelda = new Kelda();
-
-      await expect(kelda.orderWork(numberUrl)).rejects.toEqual(
-        new KeldaError("Could not load work from url: '/path/to/number/script'")
-      );
-    });
-
-    it('throws when status is 500', async () => {
+    it('throws when there is a problem loading the script', async () => {
       xhr.get(numberUrl, (_, res) => res.status(500));
 
       const kelda = new Kelda();
 
       await expect(kelda.orderWork(numberUrl)).rejects.toEqual(
         new KeldaError("Could not load work from url: '/path/to/number/script'")
-      );
-    });
-
-    it('throws if script does not return a function', async () => {
-      const brokenScript = 'return false;';
-
-      xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
-
-      const kelda = new Kelda();
-
-      await expect(kelda.orderWork(numberUrl)).rejects.toEqual(
-        new KeldaError(
-          "Script did not return a work function: '/path/to/number/script'"
-        )
       );
     });
   });
@@ -163,19 +139,7 @@ describe('Kelda', () => {
         expect(result3).toBe(true);
       });
 
-      it('throws when status is 400', async () => {
-        xhr.get(numberUrl, (_, res) => res.status(400));
-
-        const kelda = new Kelda();
-
-        await expect(kelda.load(numberUrl)).rejects.toEqual(
-          new KeldaError(
-            "Could not load work from url: '/path/to/number/script'"
-          )
-        );
-      });
-
-      it('throws when status is 500', async () => {
+      it('throws when there is a problem loading the script', async () => {
         xhr.get(numberUrl, (_, res) => res.status(500));
 
         const kelda = new Kelda();
@@ -183,20 +147,6 @@ describe('Kelda', () => {
         await expect(kelda.load(numberUrl)).rejects.toEqual(
           new KeldaError(
             "Could not load work from url: '/path/to/number/script'"
-          )
-        );
-      });
-
-      it('throws if script does not return a function', async () => {
-        const brokenScript = 'return false;';
-
-        xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
-
-        const kelda = new Kelda();
-
-        await expect(kelda.load(numberUrl)).rejects.toEqual(
-          new KeldaError(
-            "Script did not return a work function: '/path/to/number/script'"
           )
         );
       });
@@ -240,20 +190,7 @@ describe('Kelda', () => {
         expect(result3).toBe(true);
       });
 
-      it('throws when status is 400', async () => {
-        xhr.get(numberUrl, (_, res) => res.status(400));
-
-        const kelda = new Kelda();
-        const id = kelda.lazy(numberUrl);
-
-        await expect(kelda.orderWork(id)).rejects.toEqual(
-          new KeldaError(
-            "Could not load work from url: '/path/to/number/script'"
-          )
-        );
-      });
-
-      it('throws when status is 500', async () => {
+      it('throws when there is a problem loading the script', async () => {
         xhr.get(numberUrl, (_, res) => res.status(500));
 
         const kelda = new Kelda();
@@ -262,21 +199,6 @@ describe('Kelda', () => {
         await expect(kelda.orderWork(id)).rejects.toEqual(
           new KeldaError(
             "Could not load work from url: '/path/to/number/script'"
-          )
-        );
-      });
-
-      it('throws if script does not return a function', async () => {
-        const brokenScript = 'return false;';
-
-        xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
-
-        const kelda = new Kelda();
-        const id = kelda.lazy(numberUrl);
-
-        await expect(kelda.orderWork(id)).rejects.toEqual(
-          new KeldaError(
-            "Script did not return a work function: '/path/to/number/script'"
           )
         );
       });
