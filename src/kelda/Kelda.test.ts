@@ -27,20 +27,7 @@ describe('Kelda', () => {
     xhr.teardown();
   });
 
-  it('can take multiple orders', async () => {
-    const kelda = new Kelda({ threadPoolDepth: 3 });
-    const workPromises: Promise<number>[] = [];
-
-    Array(10)
-      .fill(null)
-      .forEach(() => kelda.orderWork(work));
-
-    workPromises.forEach(
-      async workPromise => await expect(workPromise).resolves.toBe(2)
-    );
-  });
-
-  describe('can process functions as work', () => {
+  describe('executing work from functions', () => {
     it('when Workers are available', async () => {
       const kelda = new Kelda();
       const result = await kelda.orderWork(work);
@@ -55,6 +42,19 @@ describe('Kelda', () => {
       const result = await kelda.orderWork(work);
 
       expect(result).toBe(2);
+    });
+
+    it('can take multiple orders', async () => {
+      const kelda = new Kelda({ threadPoolDepth: 3 });
+      const workPromises: Promise<number>[] = [];
+
+      Array(10)
+        .fill(null)
+        .forEach(() => kelda.orderWork(work));
+
+      workPromises.forEach(
+        async workPromise => await expect(workPromise).resolves.toBe(2)
+      );
     });
   });
 
@@ -113,45 +113,8 @@ describe('Kelda', () => {
     });
   });
 
-  describe('eager loading work for later use', () => {
-    it('should provide work id for a given script', async () => {
-      xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
-
-      const kelda = new Kelda();
-      const id = await kelda.load(numberUrl);
-
-      expect(id).toEqual(expect.any(Number));
-    });
-
-    it('should execute work for given work id', async () => {
-      xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
-
-      const kelda = new Kelda();
-      const id = await kelda.load(numberUrl);
-      const result = await kelda.orderWork(id);
-
-      expect(result).toBe(30);
-    });
-
-    it('can load and execute multiple work functions', async () => {
-      xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
-      xhr.get(stringUrl, (_, res) => res.status(200).body(stringScript));
-      xhr.get(booleanUrl, (_, res) => res.status(200).body(booleanScript));
-
-      const kelda = new Kelda();
-      const id1 = await kelda.load(numberUrl);
-      const id2 = await kelda.load(stringUrl);
-      const id3 = await kelda.load(booleanUrl);
-      const result1 = await kelda.orderWork(id1);
-      const result2 = await kelda.orderWork(id2);
-      const result3 = await kelda.orderWork(id3);
-
-      expect(result1).toBe(30);
-      expect(result2).toBe('aabb');
-      expect(result3).toBe(true);
-    });
-
-    it('should execute work for given work id', async () => {
+  describe('executing work from work id', () => {
+    it('throws when provided work id is invalid', async () => {
       xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
       const kelda = new Kelda();
@@ -162,43 +125,162 @@ describe('Kelda', () => {
       );
     });
 
-    it('throws when status is 400', async () => {
-      xhr.get(numberUrl, (_, res) => res.status(400));
+    describe('eager loading', () => {
+      it('should provide work id for a given script', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
-      const kelda = new Kelda();
+        const kelda = new Kelda();
+        const id = await kelda.load(numberUrl);
 
-      await expect(kelda.load(numberUrl)).rejects.toEqual(
-        new KeldaError("Could not load work from url: '/path/to/number/script'")
-      );
+        expect(id).toEqual(expect.any(Number));
+      });
+
+      it('should execute work for given work id', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
+
+        const kelda = new Kelda();
+        const id = await kelda.load(numberUrl);
+        const result = await kelda.orderWork(id);
+
+        expect(result).toBe(30);
+      });
+
+      it('can load and execute multiple work functions', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
+        xhr.get(stringUrl, (_, res) => res.status(200).body(stringScript));
+        xhr.get(booleanUrl, (_, res) => res.status(200).body(booleanScript));
+
+        const kelda = new Kelda();
+        const id1 = await kelda.load(numberUrl);
+        const id2 = await kelda.load(stringUrl);
+        const id3 = await kelda.load(booleanUrl);
+        const result1 = await kelda.orderWork(id1);
+        const result2 = await kelda.orderWork(id2);
+        const result3 = await kelda.orderWork(id3);
+
+        expect(result1).toBe(30);
+        expect(result2).toBe('aabb');
+        expect(result3).toBe(true);
+      });
+
+      it('throws when status is 400', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(400));
+
+        const kelda = new Kelda();
+
+        await expect(kelda.load(numberUrl)).rejects.toEqual(
+          new KeldaError(
+            "Could not load work from url: '/path/to/number/script'"
+          )
+        );
+      });
+
+      it('throws when status is 500', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(500));
+
+        const kelda = new Kelda();
+
+        await expect(kelda.load(numberUrl)).rejects.toEqual(
+          new KeldaError(
+            "Could not load work from url: '/path/to/number/script'"
+          )
+        );
+      });
+
+      it('throws if script does not return a function', async () => {
+        const brokenScript = 'return false;';
+
+        xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
+
+        const kelda = new Kelda();
+
+        await expect(kelda.load(numberUrl)).rejects.toEqual(
+          new KeldaError(
+            "Script did not return a work function: '/path/to/number/script'"
+          )
+        );
+      });
     });
 
-    it('throws when status is 500', async () => {
-      xhr.get(numberUrl, (_, res) => res.status(500));
+    describe('lazy loading', () => {
+      it('should provide work id for a given script', () => {
+        xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
-      const kelda = new Kelda();
+        const kelda = new Kelda();
+        const id = kelda.lazy(numberUrl);
 
-      await expect(kelda.load(numberUrl)).rejects.toEqual(
-        new KeldaError("Could not load work from url: '/path/to/number/script'")
-      );
+        expect(id).toEqual(expect.any(Number));
+      });
+
+      it('should execute work for given work id', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
+
+        const kelda = new Kelda();
+        const id = kelda.lazy(numberUrl);
+        const result = await kelda.orderWork(id);
+
+        expect(result).toBe(30);
+      });
+
+      it('can load and execute multiple work functions', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
+        xhr.get(stringUrl, (_, res) => res.status(200).body(stringScript));
+        xhr.get(booleanUrl, (_, res) => res.status(200).body(booleanScript));
+
+        const kelda = new Kelda();
+        const id1 = kelda.lazy(numberUrl);
+        const id2 = kelda.lazy(stringUrl);
+        const id3 = kelda.lazy(booleanUrl);
+        const result1 = await kelda.orderWork(id1);
+        const result2 = await kelda.orderWork(id2);
+        const result3 = await kelda.orderWork(id3);
+
+        expect(result1).toBe(30);
+        expect(result2).toBe('aabb');
+        expect(result3).toBe(true);
+      });
+
+      it('throws when status is 400', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(400));
+
+        const kelda = new Kelda();
+        const id = kelda.lazy(numberUrl);
+
+        await expect(kelda.orderWork(id)).rejects.toEqual(
+          new KeldaError(
+            "Could not load work from url: '/path/to/number/script'"
+          )
+        );
+      });
+
+      it('throws when status is 500', async () => {
+        xhr.get(numberUrl, (_, res) => res.status(500));
+
+        const kelda = new Kelda();
+        const id = kelda.lazy(numberUrl);
+
+        await expect(kelda.orderWork(id)).rejects.toEqual(
+          new KeldaError(
+            "Could not load work from url: '/path/to/number/script'"
+          )
+        );
+      });
+
+      it('throws if script does not return a function', async () => {
+        const brokenScript = 'return false;';
+
+        xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
+
+        const kelda = new Kelda();
+        const id = kelda.lazy(numberUrl);
+
+        await expect(kelda.orderWork(id)).rejects.toEqual(
+          new KeldaError(
+            "Script did not return a work function: '/path/to/number/script'"
+          )
+        );
+      });
     });
-
-    it('throws if script does not return a function', async () => {
-      const brokenScript = 'return false;';
-
-      xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
-
-      const kelda = new Kelda();
-
-      await expect(kelda.load(numberUrl)).rejects.toEqual(
-        new KeldaError(
-          "Script did not return a work function: '/path/to/number/script'"
-        )
-      );
-    });
-  });
-
-  xdescribe('lazy loading work for later use', () => {
-    // TODO
   });
 
   describe('error handling', () => {

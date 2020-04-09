@@ -10,6 +10,7 @@ declare module 'kelda-js' {
 
     public orderWork<T>(source: Work<T> | string | number): Promise<T>;
     public load(source: string): Promise<number>;
+    public lazy(source: string): number;
   }
 
   export default Kelda;
