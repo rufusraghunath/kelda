@@ -1,6 +1,6 @@
 import WorkerJob from './WorkerJob';
 import MockWorker from '../dom-mocks/MockWorker';
-import { work, errorWork } from '../util/testUtils';
+import { work, errorWork, addWork } from '../util/testUtils';
 import MockURL, { getActiveUrls } from '../dom-mocks/MockURL';
 
 describe('WorkerJob', () => {
@@ -9,6 +9,13 @@ describe('WorkerJob', () => {
     const result = await job.execute();
 
     expect(result).toBe(2);
+  });
+
+  it('can apply args to work', async () => {
+    const job = new WorkerJob(addWork).with(1, 2);
+    const result = await job.execute();
+
+    expect(result).toBe(3);
   });
 
   it('should reject when something goes wrong during Worker initialization', async () => {

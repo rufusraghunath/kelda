@@ -23,7 +23,8 @@ class WorkerJob<T> implements Job<T> {
   public isDone: boolean = false;
   private worker: Worker | null = null;
   private work: Work<T>;
-  private url: string;
+  private url?: string;
+  private args?: any[];
 
   constructor(work: Work<T>) {
     /*
@@ -34,15 +35,21 @@ class WorkerJob<T> implements Job<T> {
     */
     this.cleanUp = this.cleanUp.bind(this);
     this.work = work;
-    this.url = this.getWorkerUrl(); // TODO: Should only get called on .execute()
+    // this.url = this.getWorkerUrl(); // TODO: Should only get called on .execute()
+  }
+
+  public with(...args: any[]): Job<T> {
+    this.args = args;
+    return this;
   }
 
   public execute(): Promise<T> {
+    this.url = this.getWorkerUrl();
     return this.getWorkPromise().finally(this.cleanUp);
   }
 
   private cleanUp() {
-    URL.revokeObjectURL(this.url);
+    this.url && URL.revokeObjectURL(this.url);
 
     this.worker?.terminate();
 
@@ -60,6 +67,8 @@ class WorkerJob<T> implements Job<T> {
   }
 
   private doWorkInWorker(resolve: Resolve, reject: Reject): void {
+    this.url = this.getWorkerUrl();
+
     this.worker = new Worker(this.url);
 
     this.initWorkerMessageHandling(resolve, reject);
@@ -107,7 +116,7 @@ class WorkerJob<T> implements Job<T> {
 
     // Coverage cannot be collected from the init function as it is stringified and eval'd
     /* istanbul ignore next */
-    const init = (work: Work<T>) => {
+    const init = (work: Work<T>, args: any[]) => {
       let isDone = false;
       //@ts-ignore:
       self.onmessage = message => {
@@ -118,7 +127,15 @@ class WorkerJob<T> implements Job<T> {
             // TS helpers that don't exist in the MockWorker eval scope
             //@ts-ignore:
 
-            const result = work.call(null);
+            let boundWork = work;
+
+            args.forEach(arg => {
+              boundWork = boundWork.bind(null, arg);
+              // Can't use spread operator for work.call(null, ...args)
+              // This is another TS helper issue
+            });
+
+            const result = boundWork.call(null);
 
             if (result instanceof Promise) {
               result.then(unwrappedResult => {
@@ -154,7 +171,7 @@ class WorkerJob<T> implements Job<T> {
       };
     };
 
-    return `(${init})(${this.work})`;
+    return `(${init})(${this.work}, [${this.args}])`;
   }
 }
 

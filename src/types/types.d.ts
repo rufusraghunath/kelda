@@ -1,9 +1,10 @@
 type Resolve = (result?: any) => void;
 type Reject = (error?: Error) => void;
-type Work<T> = () => T;
+type Work<T> = (...args: any[]) => T;
 
 interface Job<T> {
   isDone: boolean;
+  with: (...args: any[]) => Job<T>;
   execute: () => Promise<T>;
 }
 

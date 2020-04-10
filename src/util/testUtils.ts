@@ -16,6 +16,8 @@ export const withoutWorkers = () => {
 
 export const work = () => 1 + 1;
 
+export const addWork = (a: number, b: number) => a + b;
+
 export const oneSecondWork = () =>
   new Promise(resolve => setTimeout(() => resolve(2), 1000));
 

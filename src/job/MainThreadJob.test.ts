@@ -3,10 +3,11 @@ import {
   oneSecondWork,
   work,
   errorWork,
-  withoutWorkers
+  withoutWorkers,
+  addWork
 } from '../util/testUtils';
 
-describe('SyncJob', () => {
+describe('MainThreadJob', () => {
   beforeEach(() => {
     withoutWorkers();
   });
@@ -23,6 +24,13 @@ describe('SyncJob', () => {
     const result = await job.execute();
 
     expect(result).toBe(2);
+  });
+
+  it('can apply args to work', async () => {
+    const job = new MainThreadJob(addWork).with(1, 2);
+    const result = await job.execute();
+
+    expect(result).toBe(3);
   });
 
   it('should reject when an error is thrown while executing work', async () => {
