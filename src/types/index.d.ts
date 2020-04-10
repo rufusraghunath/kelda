@@ -8,7 +8,10 @@ declare module 'kelda-js' {
   class Kelda {
     constructor(options?: KeldaOptions);
 
-    public orderWork<T>(source: Work<T> | string | number): Promise<T>;
+    public orderWork<T>(
+      source: Work<T> | string | number,
+      ...args: any[]
+    ): Promise<T>;
     public load(source: string): Promise<number>;
     public lazy(source: string): number;
   }

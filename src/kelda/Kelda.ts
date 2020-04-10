@@ -23,10 +23,13 @@ class Kelda {
     this.threadPool = new ThreadPool(threadPoolDepth);
   }
 
-  public async orderWork<T>(source: Work<T> | string | number): Promise<T> {
+  public async orderWork<T>(
+    source: Work<T> | string | number,
+    ...args: any[]
+  ): Promise<T> {
     try {
       const work = await this.getWork(source);
-      const job = JobFactory.getJob(work);
+      const job = JobFactory.getJob(work).with(args);
       const result = await this.threadPool.schedule(job);
 
       return result;

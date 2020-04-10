@@ -1,5 +1,5 @@
 import Kelda from './Kelda';
-import { work, withoutWorkers, errorWork } from '../util/testUtils';
+import { work, withoutWorkers, errorWork, addWork } from '../util/testUtils';
 import KeldaError from './KeldaError';
 import xhr from 'xhr-mock';
 import fs from 'fs';
@@ -9,6 +9,7 @@ describe('Kelda', () => {
   const numberUrl = '/path/to/number/script';
   const stringUrl = '/path/to/string/script';
   const booleanUrl = '/path/to/boolean/script';
+  const argumentsUrl = '/path/to/arguments/script';
   const numberScript = fs
     .readFileSync(path.join(__dirname, 'testScript.number.js'))
     .toString();
@@ -17,6 +18,9 @@ describe('Kelda', () => {
     .toString();
   const booleanScript = fs
     .readFileSync(path.join(__dirname, 'testScript.boolean.js'))
+    .toString();
+  const argumentsScript = fs
+    .readFileSync(path.join(__dirname, 'testScript.arguments.js'))
     .toString();
 
   beforeEach(() => {
@@ -56,6 +60,13 @@ describe('Kelda', () => {
         async workPromise => await expect(workPromise).resolves.toBe(2)
       );
     });
+
+    it('can apply args to work', async () => {
+      const kelda = new Kelda();
+      const result = await kelda.orderWork(addWork, 1, 2);
+
+      expect(result).toBe(3);
+    });
   });
 
   describe('executing work from script url', () => {
@@ -76,6 +87,15 @@ describe('Kelda', () => {
       const result = await kelda.orderWork(numberUrl);
 
       expect(result).toBe(30);
+    });
+
+    it('can apply args to work', async () => {
+      xhr.get(argumentsUrl, (_, res) => res.status(200).body(argumentsScript));
+
+      const kelda = new Kelda();
+      const result = await kelda.orderWork(argumentsUrl, 1, 2);
+
+      expect(result).toBe(53);
     });
 
     it('throws when there is a problem loading the script', async () => {
@@ -139,6 +159,18 @@ describe('Kelda', () => {
         expect(result3).toBe(true);
       });
 
+      it('can apply args to work', async () => {
+        xhr.get(argumentsUrl, (_, res) =>
+          res.status(200).body(argumentsScript)
+        );
+
+        const kelda = new Kelda();
+        const id = await kelda.load(argumentsUrl);
+        const result = await kelda.orderWork(id, 1, 2);
+
+        expect(result).toBe(53);
+      });
+
       it('throws when there is a problem loading the script', async () => {
         xhr.get(numberUrl, (_, res) => res.status(500));
 
@@ -188,6 +220,18 @@ describe('Kelda', () => {
         expect(result1).toBe(30);
         expect(result2).toBe('aabb');
         expect(result3).toBe(true);
+      });
+
+      it('can apply args to work', async () => {
+        xhr.get(argumentsUrl, (_, res) =>
+          res.status(200).body(argumentsScript)
+        );
+
+        const kelda = new Kelda();
+        const id = kelda.lazy(argumentsUrl);
+        const result = await kelda.orderWork(id, 1, 2);
+
+        expect(result).toBe(53);
       });
 
       it('throws when there is a problem loading the script', async () => {
