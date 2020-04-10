@@ -48,7 +48,7 @@ class Kelda {
 
   public lazy(source: string): number {
     const id = Object.keys(this.cache).length + 1;
-    this.cache[id] = new WorkLoader(source, true);
+    this.cache[id] = new WorkLoader(source);
 
     return id;
   }

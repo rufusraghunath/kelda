@@ -1,29 +1,19 @@
 import KeldaError from './KeldaError';
 
-export enum WorkLoadingStatus {
-  NOT_STARTED = 'NOT_STARTED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE'
-}
-
 class WorkLoader<T> {
-  public status: WorkLoadingStatus = WorkLoadingStatus.NOT_STARTED;
   private work: Promise<Work<T>> | undefined;
   private source: string;
 
-  constructor(source: string, lazy: boolean = false) {
+  constructor(source: string) {
     this.source = source;
-    if (!lazy) {
-      this.work = this.getWorkFromScript(source);
-    }
   }
 
   public get(): Promise<Work<T>> {
-    return this.work || this.getWorkFromScript(this.source);
+    this.work = this.work || this.getWorkFromScript(this.source);
+    return this.work;
   }
 
   private async getWorkFromScript<T>(url: string): Promise<Work<T>> {
-    this.status = WorkLoadingStatus.IN_PROGRESS;
     const script = await this.loadScript(url);
     const work = Function(script).call(null);
     // script returns work function
@@ -34,8 +24,6 @@ class WorkLoader<T> {
 
     work.toString = () => `(function(){${script}})()`;
     // custom toString is needed to maintain context for WorkerJob
-
-    this.status = WorkLoadingStatus.DONE;
 
     return work;
   }
