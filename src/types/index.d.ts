@@ -1,5 +1,5 @@
 declare module 'kelda-js' {
-  type Work<T> = () => T;
+  type Work<T> = (...args: any[]) => T;
 
   interface KeldaOptions {
     threadPoolDepth: number;
