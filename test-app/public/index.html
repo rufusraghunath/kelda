@@ -18,15 +18,31 @@
       <div class="execute">
         Start the timer and then choose where to execute the work. It will try
         to find the 45th fibonacci number using a non-optimized recursive
-        implementation. Note how the timer freezes when running the work in the
-        main thread.
+        implementation. Notice how the timer freezes when running the work in
+        the main thread, but not when running in Kelda (unless your browser
+        doesn't support Web Workers).
       </div>
-      <!-- Get fibonacci:
-      <select class="num" id="num"></select> -->
       <div>Result:</div>
       <div class="result" id="result">--</div>
-      <button id="main-thread">Main thread</button>
-      <button id="kelda">Kelda</button>
+      <section class="kelda-options">
+        <div class="main-thread">
+          <div class="bold">Run in main thread</div>
+          <button id="main-thread">Start</button>
+        </div>
+        <div>
+          <div class="bold">Run in Kelda</div>
+          <div>From work function <button id="kelda">Start</button></div>
+          <div>
+            From immediately-invoked script
+            <button id="kelda-script">Start</button>
+          </div>
+          <div>
+            From cached script, with arg
+            <select class="num" id="num"></select>
+            <button id="kelda-parameterized">Start</button>
+          </div>
+        </div>
+      </section>
     </section>
     <script src="/js/bundle.js"></script>
   </body>

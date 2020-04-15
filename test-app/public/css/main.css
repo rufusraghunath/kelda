@@ -4,9 +4,10 @@
 }
 
 body {
-  width: 100vw;
+  width: 700px;
   position: relative;
   text-align: center;
+  padding: 0 50px;
 }
 
 .title {
@@ -31,4 +32,16 @@ body {
 
 .result {
   margin-bottom: 15px;
+}
+
+.kelda-options {
+  text-align: left;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.main-thread {
+  margin-bottom: 20px;
 }

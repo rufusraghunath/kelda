@@ -47,6 +47,8 @@ The biggest technical constraints is that functions and therefore their closures
 
 ## Open questions/ideas
 
+ObservableJob, using a generator to yield many results over time
+
 Can we force bundlers to _not_ cache imports for Worker functions, but instead replace every usage with the whole source code?
 
 Global wrapper around all functions? Could optimize even frameworks like React

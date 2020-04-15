@@ -1,24 +1,25 @@
-import Kelda from "kelda-js";
-import getWork from "./getWork";
+import Kelda from 'kelda-js';
+import getFibWork from './getFibWork';
 
-// const num = document.getElementById("num");
+const kelda = new Kelda();
+const num = document.getElementById('num');
 
-// Array(45)
-//   .fill(null)
-//   .map((_, i) => i + 1)
-//   .forEach(i => {
-//     const option = document.createElement("option");
+Array(45)
+  .fill(null)
+  .map((_, i) => i + 1)
+  .forEach(i => {
+    const option = document.createElement('option');
 
-//     option.value = i;
-//     option.innerText = i;
+    option.value = i;
+    option.innerText = i;
 
-//     num.appendChild(option);
-//   });
+    num.appendChild(option);
+  });
 
-const seconds = document.getElementById("seconds");
+const seconds = document.getElementById('seconds');
 let interval;
 
-document.getElementById("start").onclick = () => {
+document.getElementById('start').onclick = () => {
   const startTime = Date.now();
 
   interval = setInterval(() => {
@@ -29,19 +30,19 @@ document.getElementById("start").onclick = () => {
   }, 1000);
 };
 
-document.getElementById("stop").onclick = () => {
+document.getElementById('stop').onclick = () => {
   clearInterval(interval);
 
   seconds.innerText = 0;
 };
 
-const result = document.getElementById("result");
+const result = document.getElementById('result');
 
-document.getElementById("main-thread").onclick = () => {
-  result.innerText = "Working in main thread...";
+document.getElementById('main-thread').onclick = () => {
+  result.innerText = 'Working in main thread...';
 
   setTimeout(() => {
-    const work = getWork();
+    const work = getFibWork();
 
     try {
       const data = work();
@@ -50,22 +51,47 @@ document.getElementById("main-thread").onclick = () => {
     } catch (e) {
       console.log(e);
 
-      result.innerText = "Error";
+      result.innerText = 'Error';
     }
   }, 0);
 };
 
-document.getElementById("kelda").onclick = () => {
-  result.innerText = "Working in Kelda...";
-
-  const work = getWork();
-  const kelda = new Kelda();
+document.getElementById('kelda').onclick = () => {
+  result.innerText = 'Working in Kelda...';
 
   kelda
-    .orderWork(work)
+    .orderWork(getFibWork())
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
-      result.innerText = "Error";
+      result.innerText = 'Error';
     });
 };
+
+document.getElementById('kelda-script').onclick = () => {
+  result.innerText = 'Working in Kelda...';
+
+  kelda
+    .orderWork('/js/hardcodedFib.js')
+    .then(data => (result.innerText = data))
+    .catch(e => {
+      console.error(e);
+      result.innerText = 'Error';
+    });
+};
+
+kelda.load('/js/parameterizedFib.js').then(id => {
+  document.getElementById('kelda-parameterized').onclick = () => {
+    result.innerText = 'Working in Kelda...';
+
+    const arg = num.value;
+
+    kelda
+      .orderWork(id, arg)
+      .then(data => (result.innerText = data))
+      .catch(e => {
+        console.error(e);
+        result.innerText = 'Error';
+      });
+  };
+});
