@@ -1,10 +1,10 @@
 class MainThreadJob<T> implements Job<T> {
-  private work: Work<T>;
+  private workModule: WorkModule<T>;
   private args: any[] = [];
   public isDone: boolean = false;
 
-  constructor(work: Work<T>) {
-    this.work = work;
+  constructor(work: WorkModule<T>) {
+    this.workModule = work;
   }
 
   public with(...args: any[]): Job<T> {
@@ -15,7 +15,8 @@ class MainThreadJob<T> implements Job<T> {
   public execute(): Promise<T> {
     return new Promise((resolve, reject) => {
       try {
-        const result: T = this.work.call(null, ...this.args);
+        const work = this.workModule.get();
+        const result: T = work.call(null, ...this.args);
         resolve(result);
       } catch (e) {
         reject(e);

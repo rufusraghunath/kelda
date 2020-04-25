@@ -5,15 +5,20 @@ declare module 'kelda-js' {
     threadPoolDepth: number;
   }
 
+  interface RemoteWorkParams {
+    url: string;
+    exportName?: string;
+  }
+
   class Kelda {
     constructor(options?: KeldaOptions);
 
     public orderWork<T>(
-      source: Work<T> | string | number,
+      source: Work<T> | RemoteWorkParams | number,
       ...args: any[]
     ): Promise<T>;
-    public load(source: string): Promise<number>;
-    public lazy(source: string): number;
+    public load(params: RemoteWorkParams): Promise<number>;
+    public lazy(params: RemoteWorkParams): number;
   }
 
   export default Kelda;

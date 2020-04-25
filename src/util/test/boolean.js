@@ -1,6 +1,6 @@
 const a = true;
 const b = false;
 
-return function() {
+export default function() {
   return a || b;
-};
+}

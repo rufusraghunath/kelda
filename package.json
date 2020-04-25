@@ -31,6 +31,7 @@
     "prepublish": "npm run build",
     "build": "npm run lint && npm run prettier && npm run test:coverage && npm run bundle && npm run copy-types",
     "bundle": "webpack --mode=production",
+    "build-test-scripts": "webpack --mode=production --config=./src/util/test/webpack.config.js",
     "test": "jest --config jestconfig.json --watch",
     "test:coverage": "jest --config jestconfig.json --coverage",
     "prettier:base": "prettier --parser typescript",

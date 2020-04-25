@@ -1,25 +1,29 @@
 import MainThreadJob from '../job/MainThreadJob';
 import Thread from './Thread';
-import { work, oneSecondWork, errorWork } from '../util/testUtils';
+import { work, oneSecondWork, errorWork } from '../util/test/testUtils';
+import LocalWorkModule from '../work/LocalWorkModule';
 
 describe('Thread', () => {
   it('can execute sync Jobs', async () => {
     const thread = new Thread();
-    const job = new MainThreadJob(work);
+    const workModule = new LocalWorkModule(work);
+    const job = new MainThreadJob(workModule);
 
     await expect(thread.do(job)).resolves.toBe(2);
   });
 
   it('can execute async Jobs', async () => {
     const thread = new Thread();
-    const job = new MainThreadJob(oneSecondWork);
+    const workModule = new LocalWorkModule(oneSecondWork);
+    const job = new MainThreadJob(workModule);
 
     await expect(thread.do(job)).resolves.toBe(2);
   });
 
   it('handles Job failures', async () => {
     const thread = new Thread();
-    const job = new MainThreadJob(errorWork);
+    const workModule = new LocalWorkModule(errorWork);
+    const job = new MainThreadJob(workModule);
 
     await expect(thread.do(job)).rejects.toEqual(new Error('The work failed'));
   });
@@ -32,7 +36,8 @@ describe('Thread', () => {
 
   it("sets 'isIdle' to false during work", () => {
     const thread = new Thread();
-    const job = new MainThreadJob(work);
+    const workModule = new LocalWorkModule(work);
+    const job = new MainThreadJob(workModule);
 
     thread.do(job);
 
@@ -41,7 +46,8 @@ describe('Thread', () => {
 
   it("resets 'isIdle' to true after work", async () => {
     const thread = new Thread();
-    const job = new MainThreadJob(work);
+    const workModule = new LocalWorkModule(work);
+    const job = new MainThreadJob(workModule);
 
     await thread.do(job);
 

@@ -1,5 +1,10 @@
 import Kelda from './Kelda';
-import { work, withoutWorkers, errorWork, addWork } from '../util/testUtils';
+import {
+  work,
+  withoutWorkers,
+  errorWork,
+  addWork
+} from '../util/test/testUtils';
 import KeldaError from './KeldaError';
 import xhr from 'xhr-mock';
 import fs from 'fs';
@@ -10,17 +15,22 @@ describe('Kelda', () => {
   const stringUrl = '/path/to/string/script';
   const booleanUrl = '/path/to/boolean/script';
   const argumentsUrl = '/path/to/arguments/script';
+  const numberParams = { url: numberUrl };
+  const stringParams = { url: stringUrl };
+  const booleanParams = { url: booleanUrl };
+  const argumentsParams = { url: argumentsUrl };
+
   const numberScript = fs
-    .readFileSync(path.join(__dirname, 'testScript.number.js'))
+    .readFileSync(path.join(__dirname, '../util/test/modules/number.js'))
     .toString();
   const stringScript = fs
-    .readFileSync(path.join(__dirname, 'testScript.string.js'))
+    .readFileSync(path.join(__dirname, '../util/test/modules/string.js'))
     .toString();
   const booleanScript = fs
-    .readFileSync(path.join(__dirname, 'testScript.boolean.js'))
+    .readFileSync(path.join(__dirname, '../util/test/modules/boolean.js'))
     .toString();
   const argumentsScript = fs
-    .readFileSync(path.join(__dirname, 'testScript.arguments.js'))
+    .readFileSync(path.join(__dirname, '../util/test/modules/arguments.js'))
     .toString();
 
   beforeEach(() => {
@@ -74,7 +84,7 @@ describe('Kelda', () => {
       xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
       const kelda = new Kelda();
-      const result = await kelda.orderWork(numberUrl);
+      const result = await kelda.orderWork(numberParams);
 
       expect(result).toBe(30);
     });
@@ -84,7 +94,7 @@ describe('Kelda', () => {
       withoutWorkers();
 
       const kelda = new Kelda();
-      const result = await kelda.orderWork(numberUrl);
+      const result = await kelda.orderWork(numberParams);
 
       expect(result).toBe(30);
     });
@@ -93,7 +103,7 @@ describe('Kelda', () => {
       xhr.get(argumentsUrl, (_, res) => res.status(200).body(argumentsScript));
 
       const kelda = new Kelda();
-      const result = await kelda.orderWork(argumentsUrl, 1, 2);
+      const result = await kelda.orderWork(argumentsParams, 1, 2);
 
       expect(result).toBe(53);
     });
@@ -103,9 +113,13 @@ describe('Kelda', () => {
 
       const kelda = new Kelda();
 
-      await expect(kelda.orderWork(numberUrl)).rejects.toEqual(
+      await expect(kelda.orderWork(numberParams)).rejects.toEqual(
         new KeldaError("Could not load work from url: '/path/to/number/script'")
       );
+    });
+
+    xit('handles named exports', () => {
+      // TODO
     });
   });
 
@@ -126,7 +140,7 @@ describe('Kelda', () => {
         xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
         const kelda = new Kelda();
-        const id = await kelda.load(numberUrl);
+        const id = await kelda.load(numberParams);
 
         expect(id).toEqual(expect.any(Number));
       });
@@ -135,7 +149,7 @@ describe('Kelda', () => {
         xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
         const kelda = new Kelda();
-        const id = await kelda.load(numberUrl);
+        const id = await kelda.load(numberParams);
         const result = await kelda.orderWork(id);
 
         expect(result).toBe(30);
@@ -147,9 +161,9 @@ describe('Kelda', () => {
         xhr.get(booleanUrl, (_, res) => res.status(200).body(booleanScript));
 
         const kelda = new Kelda();
-        const id1 = await kelda.load(numberUrl);
-        const id2 = await kelda.load(stringUrl);
-        const id3 = await kelda.load(booleanUrl);
+        const id1 = await kelda.load(numberParams);
+        const id2 = await kelda.load(stringParams);
+        const id3 = await kelda.load(booleanParams);
         const result1 = await kelda.orderWork(id1);
         const result2 = await kelda.orderWork(id2);
         const result3 = await kelda.orderWork(id3);
@@ -165,7 +179,7 @@ describe('Kelda', () => {
         );
 
         const kelda = new Kelda();
-        const id = await kelda.load(argumentsUrl);
+        const id = await kelda.load(argumentsParams);
         const result = await kelda.orderWork(id, 1, 2);
 
         expect(result).toBe(53);
@@ -176,11 +190,15 @@ describe('Kelda', () => {
 
         const kelda = new Kelda();
 
-        await expect(kelda.load(numberUrl)).rejects.toEqual(
+        await expect(kelda.load(numberParams)).rejects.toEqual(
           new KeldaError(
             "Could not load work from url: '/path/to/number/script'"
           )
         );
+      });
+
+      xit('handles named exports', () => {
+        // TODO
       });
     });
 
@@ -189,7 +207,7 @@ describe('Kelda', () => {
         xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
         const kelda = new Kelda();
-        const id = kelda.lazy(numberUrl);
+        const id = kelda.lazy(numberParams);
 
         expect(id).toEqual(expect.any(Number));
       });
@@ -198,7 +216,7 @@ describe('Kelda', () => {
         xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
 
         const kelda = new Kelda();
-        const id = kelda.lazy(numberUrl);
+        const id = kelda.lazy(numberParams);
         const result = await kelda.orderWork(id);
 
         expect(result).toBe(30);
@@ -210,9 +228,9 @@ describe('Kelda', () => {
         xhr.get(booleanUrl, (_, res) => res.status(200).body(booleanScript));
 
         const kelda = new Kelda();
-        const id1 = kelda.lazy(numberUrl);
-        const id2 = kelda.lazy(stringUrl);
-        const id3 = kelda.lazy(booleanUrl);
+        const id1 = kelda.lazy(numberParams);
+        const id2 = kelda.lazy(stringParams);
+        const id3 = kelda.lazy(booleanParams);
         const result1 = await kelda.orderWork(id1);
         const result2 = await kelda.orderWork(id2);
         const result3 = await kelda.orderWork(id3);
@@ -228,7 +246,7 @@ describe('Kelda', () => {
         );
 
         const kelda = new Kelda();
-        const id = kelda.lazy(argumentsUrl);
+        const id = kelda.lazy(argumentsParams);
         const result = await kelda.orderWork(id, 1, 2);
 
         expect(result).toBe(53);
@@ -238,13 +256,17 @@ describe('Kelda', () => {
         xhr.get(numberUrl, (_, res) => res.status(500));
 
         const kelda = new Kelda();
-        const id = kelda.lazy(numberUrl);
+        const id = kelda.lazy(numberParams);
 
         await expect(kelda.orderWork(id)).rejects.toEqual(
           new KeldaError(
             "Could not load work from url: '/path/to/number/script'"
           )
         );
+      });
+
+      xit('handles named exports', () => {
+        // TODO
       });
     });
   });

@@ -1,6 +1,6 @@
-import MockWorker from '../dom-mocks/MockWorker';
-import MockURL from '../dom-mocks/MockURL';
-import MockBlob from '../dom-mocks/MockBlob';
+import MockWorker from '../../dom-mocks/MockWorker';
+import MockURL from '../../dom-mocks/MockURL';
+import MockBlob from '../../dom-mocks/MockBlob';
 
 export const withWorkers = () => {
   window.Worker = MockWorker as any;

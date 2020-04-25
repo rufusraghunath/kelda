@@ -1,5 +1,5 @@
-import { withWorkers, withoutWorkers } from "./src/util/testUtils";
-import MockURL from "./src/dom-mocks/MockURL";
+import { withWorkers, withoutWorkers } from './src/util/test/testUtils';
+import MockURL from './src/dom-mocks/MockURL';
 
 beforeEach(() => {
   withWorkers();

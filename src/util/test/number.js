@@ -1,6 +1,6 @@
 const a = 3;
 const b = 27;
 
-return function() {
+export default function() {
   return a + b;
-};
+}

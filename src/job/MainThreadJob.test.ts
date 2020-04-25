@@ -1,46 +1,72 @@
+import fs from 'fs';
+import path from 'path';
 import MainThreadJob from './MainThreadJob';
+import LocalWorkModule from '../work/LocalWorkModule';
 import {
   oneSecondWork,
   work,
   errorWork,
   withoutWorkers,
   addWork
-} from '../util/testUtils';
+} from '../util/test/testUtils';
+import RemoteWorkModule from '../work/RemoteWorkModule';
 
 describe('MainThreadJob', () => {
+  const numberScript = fs
+    .readFileSync(path.join(__dirname, '../util/test/modules/number.js'))
+    .toString();
+
   beforeEach(() => {
     withoutWorkers();
   });
 
   it('does synchronous work in the main JS thread', async () => {
-    const job = new MainThreadJob(work);
+    const workModule = new LocalWorkModule(work);
+    const job = new MainThreadJob(workModule);
+
     const result = await job.execute();
 
     expect(result).toBe(2);
   });
 
   it('does asynchronous work in the main JS thread', async () => {
-    const job = new MainThreadJob(oneSecondWork);
+    const workModule = new LocalWorkModule(oneSecondWork);
+    const job = new MainThreadJob(workModule);
+
     const result = await job.execute();
 
     expect(result).toBe(2);
   });
 
+  it('works with remote work modules', async () => {
+    const workModule = new RemoteWorkModule(numberScript, 'default');
+    const job = new MainThreadJob(workModule);
+
+    const result = await job.execute();
+
+    expect(result).toBe(30);
+  });
+
   it('can apply args to work', async () => {
-    const job = new MainThreadJob(addWork).with(1, 2);
+    const workModule = new LocalWorkModule(addWork);
+    const job = new MainThreadJob(workModule).with(1, 2);
+
     const result = await job.execute();
 
     expect(result).toBe(3);
   });
 
   it('should reject when an error is thrown while executing work', async () => {
-    await expect(new MainThreadJob(errorWork).execute()).rejects.toEqual(
+    const workModule = new LocalWorkModule(errorWork);
+
+    await expect(new MainThreadJob(workModule).execute()).rejects.toEqual(
       new Error('The work failed')
     );
   });
 
   it("sets 'isDone' to true after completing work", async () => {
-    const job = new MainThreadJob(work);
+    const workModule = new LocalWorkModule(work);
+    const job = new MainThreadJob(workModule);
 
     expect(job.isDone).toBe(false);
 
@@ -50,7 +76,8 @@ describe('MainThreadJob', () => {
   });
 
   it("sets 'isDone' to true when failing to complete work", async () => {
-    const job = new MainThreadJob(errorWork);
+    const workModule = new LocalWorkModule(errorWork);
+    const job = new MainThreadJob(workModule);
 
     expect(job.isDone).toBe(false);
 

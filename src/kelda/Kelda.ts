@@ -1,14 +1,20 @@
 import JobFactory from '../job/JobFactory';
 import ThreadPool from '../thread/ThreadPool';
 import KeldaError from './KeldaError';
-import WorkLoader from './WorkLoader';
+import WorkModuleLoader from '../work/WorkModuleLoader';
+import LocalWorkModule from '../work/LocalWorkModule';
 
 interface WorkCache {
-  [key: number]: WorkLoader<any>;
+  [key: number]: WorkModuleLoader;
 }
 
 interface KeldaOptions {
   threadPoolDepth: number;
+}
+
+interface RemoteWorkParams {
+  url: string;
+  exportName?: string;
 }
 
 const defaultOptions = {
@@ -24,11 +30,11 @@ class Kelda {
   }
 
   public async orderWork<T>(
-    source: Work<T> | string | number,
+    source: Work<T> | RemoteWorkParams | number,
     ...args: any[]
   ): Promise<T> {
     try {
-      const work = await this.getWork(source);
+      const work = await this.getWorkModule(source);
       const job = JobFactory.getJob(work).with(args);
       const result = await this.threadPool.schedule(job);
 
@@ -38,8 +44,8 @@ class Kelda {
     }
   }
 
-  public async load(source: string): Promise<number> {
-    const loader = new WorkLoader(source);
+  public async load({ url, exportName }: RemoteWorkParams): Promise<number> {
+    const loader = new WorkModuleLoader(url, exportName);
 
     await loader.get();
 
@@ -49,39 +55,32 @@ class Kelda {
     return id;
   }
 
-  public lazy(source: string): number {
+  public lazy({ url, exportName }: RemoteWorkParams): number {
     const id = Object.keys(this.cache).length + 1;
-    this.cache[id] = new WorkLoader(source);
+    this.cache[id] = new WorkModuleLoader(url, exportName);
 
     return id;
   }
 
-  private async getWork<T>(
-    source: Work<T> | string | number
-  ): Promise<Work<T>> {
-    let work: Work<T>;
-
+  private async getWorkModule<T>(
+    source: Work<T> | RemoteWorkParams | number
+  ): Promise<WorkModule<T>> {
     switch (typeof source) {
       case 'function': {
-        work = source;
-        break;
+        return new LocalWorkModule(source);
       }
-      case 'string': {
-        work = await new WorkLoader<T>(source).get();
-        break;
+      case 'object': {
+        const { url, exportName } = source;
+        return new WorkModuleLoader(url, exportName).get();
       }
       case 'number': {
         const loader = this.cache[source];
 
         if (!loader) throw new KeldaError(`Invalid work id: '${source}'`);
 
-        work = await loader.get();
-
-        break;
+        return loader.get();
       }
     }
-
-    return work;
   }
 
   private toKeldaError(e: Error): never {

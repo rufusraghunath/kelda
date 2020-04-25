@@ -10,23 +10,14 @@ interface KeldaWorkerMessage<T> {
   error?: Error;
 }
 
-// THOUGHTS
-// - Can I pass a string as an arg instead, which points to the module containing the work?
-// - Could we expose a Worker wrapper (called "KeldaWork"?) that would remove all the need for hand-rolling the communication bit?
-//   Then we could still take advantage of things like the worker-loader on the client's end
-//   Really, one of the issues is that I don't want the user to have to deal with an extra bundle for the Worker
-//   https://github.com/webpack-contrib/worker-loader
-//   https://github.com/borisirota/webworkify-webpack
-//   https://github.com/danderson00/webpack-worker
-
 class WorkerJob<T> implements Job<T> {
   public isDone: boolean = false;
   private worker: Worker | null = null;
-  private work: Work<T>;
+  private workModule: WorkModule<T>;
   private url?: string;
   private args?: any[];
 
-  constructor(work: Work<T>) {
+  constructor(workModule: WorkModule<T>) {
     /*
       Note that Worker creation does *not* happen in the constructor.
       A new Worker is only created when .execute() is called.
@@ -34,8 +25,7 @@ class WorkerJob<T> implements Job<T> {
       Worker threads as possible available at any given time.
     */
     this.cleanUp = this.cleanUp.bind(this);
-    this.work = work;
-    // this.url = this.getWorkerUrl(); // TODO: Should only get called on .execute()
+    this.workModule = workModule;
   }
 
   public with(...args: any[]): Job<T> {
@@ -152,12 +142,6 @@ class WorkerJob<T> implements Job<T> {
                 result
               });
             }
-
-            //@ts-ignore:
-            self.postMessage({
-              type: '$$_KELDA_DONE',
-              result
-            });
           } catch (error) {
             //@ts-ignore:
             self.postMessage({
@@ -171,7 +155,7 @@ class WorkerJob<T> implements Job<T> {
       };
     };
 
-    return `(${init})(${this.work}, [${this.args}])`;
+    return `(${init})(${this.workModule}, [${this.args}])`;
   }
 }
 
