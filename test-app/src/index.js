@@ -36,7 +36,8 @@ let interval;
 fillSelectFor('main-thread');
 fillSelectFor('func');
 fillSelectFor('script');
-fillSelectFor('cached');
+fillSelectFor('eager');
+fillSelectFor('lazy');
 
 document.getElementById('start').onclick = () => {
   const startTime = Date.now();
@@ -112,10 +113,10 @@ document.getElementById('kelda-script').onclick = () => {
 kelda
   .load({ url: '/js/fib.js' })
   .then(id => {
-    document.getElementById('kelda-cached').onclick = () => {
+    document.getElementById('kelda-eager').onclick = () => {
       inKelda();
 
-      const arg = getValueFor('cached');
+      const arg = getValueFor('eager');
 
       kelda
         .orderWork(id, arg)
@@ -127,3 +128,19 @@ kelda
     };
   })
   .catch(console.log);
+
+const lazyId = kelda.lazy({ url: '/js/fib.js' });
+
+document.getElementById('kelda-lazy').onclick = () => {
+  inKelda();
+
+  const arg = getValueFor('lazy');
+
+  kelda
+    .orderWork(lazyId, arg)
+    .then(data => (result.innerText = data))
+    .catch(e => {
+      console.error(e);
+      result.innerText = 'Error';
+    });
+};
