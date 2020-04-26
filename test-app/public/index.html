@@ -5,54 +5,66 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body>
-    <h1 class="title">Kelda Test App</h1>
-    <section class="timer">
-      <div class="seconds" id="seconds">0</div>
-      <div class="elapsed">
-        seconds elapsed
-      </div>
-      <button id="start">Start timer</button>
-      <button id="stop">Stop timer</button>
-    </section>
-    <section class="work">
-      <div class="execute">
-        Start the timer and then choose where to execute the work. It will try
-        to find the nth fibonacci number using a non-optimized recursive
-        algorithm. Notice how the timer freezes when running the work in the
-        main thread, but not when running in Kelda (unless your browser doesn't
-        support Web Workers).
-      </div>
-      <div>Result:</div>
-      <div class="result" id="result">--</div>
-      <section class="kelda-options">
-        <div class="main-thread">
-          <div class="bold">Main thread</div>
-          Run in main thread, without Kelda
-          <select class="num" id="num-main-thread"></select>
-          <button id="main-thread">
-            Start
-          </button>
+    <div class="container">
+      <h1 class="title">Kelda Test App</h1>
+      <section class="timer">
+        <div class="seconds" id="seconds">0</div>
+        <div class="elapsed">
+          seconds elapsed
         </div>
-        <div>
-          <div class="bold">Kelda</div>
-          <div>
-            Run from self-contained work function
-            <select class="num" id="num-func"></select>
-            <button id="kelda">Start</button>
-          </div>
-          <div>
-            Run from immediately-invoked remote module
-            <select class="num" id="num-script"></select>
-            <button id="kelda-script">Start</button>
-          </div>
-          <div>
-            Run from cached remote module
-            <select class="num" id="num-cached"></select>
-            <button id="kelda-cached">Start</button>
-          </div>
-        </div>
+        <button id="start">Start timer</button>
+        <button id="stop">Stop timer</button>
       </section>
-    </section>
+      <section class="work">
+        <div class="execute">
+          Start the timer and then choose where to execute the work. It will try
+          to find the <i>n</i>th fibonacci number using a non-optimized
+          recursive algorithm. Notice how the timer freezes when running the
+          work in the main thread, but not when running in Kelda (unless your
+          browser doesn't support Web Workers).
+        </div>
+        <div>Result:</div>
+        <div class="result" id="result">--</div>
+        <section class="kelda-options">
+          <div class="main-thread">
+            <div class="bold">Main thread</div>
+            <div class="flex">
+              Run in main thread, without Kelda
+              <div class="buttons">
+                <select class="num" id="num-main-thread"></select>
+                <button id="main-thread">
+                  Start
+                </button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="bold">Kelda</div>
+            <div class="flex">
+              Run from self-contained work function
+              <div class="buttons">
+                <select class="num" id="num-func"></select>
+                <button id="kelda">Start</button>
+              </div>
+            </div>
+            <div class="flex">
+              Run from immediately-invoked remote module
+              <div class="buttons">
+                <select class="num" id="num-script"></select>
+                <button id="kelda-script">Start</button>
+              </div>
+            </div>
+            <div class="flex">
+              Run from cached remote module
+              <div class="buttons">
+                <select class="num" id="num-cached"></select>
+                <button id="kelda-cached">Start</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
     <script src="/js/bundle.js"></script>
   </body>
 </html>
