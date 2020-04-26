@@ -1,23 +1,42 @@
 import Kelda from 'kelda-js';
-import fortyFifthFib from './work/fortyFifthFib';
+import inefficientFibonacci from './work/fib';
+
+function inKelda() {
+  result.innerText = 'Working in Kelda...';
+}
+
+function getSelect(idSuffix) {
+  return document.getElementById(`num-${idSuffix}`);
+}
+
+function getValueFor(idSuffix) {
+  return parseInt(getSelect(idSuffix).value, 10);
+}
+
+function fillSelectFor(idSuffix) {
+  const select = getSelect(idSuffix);
+
+  Array(46)
+    .fill(null)
+    .map((_, i) => i)
+    .forEach(i => {
+      const option = document.createElement('option');
+
+      option.value = i;
+      option.innerText = i;
+
+      select.appendChild(option);
+    });
+}
 
 const kelda = new Kelda();
-const num = document.getElementById('num');
-
-Array(45)
-  .fill(null)
-  .map((_, i) => i + 1)
-  .forEach(i => {
-    const option = document.createElement('option');
-
-    option.value = i;
-    option.innerText = i;
-
-    num.appendChild(option);
-  });
-
 const seconds = document.getElementById('seconds');
 let interval;
+
+fillSelectFor('main-thread');
+fillSelectFor('func');
+fillSelectFor('script');
+fillSelectFor('cached');
 
 document.getElementById('start').onclick = () => {
   const startTime = Date.now();
@@ -42,10 +61,9 @@ document.getElementById('main-thread').onclick = () => {
   result.innerText = 'Working in main thread...';
 
   setTimeout(() => {
-    const work = fortyFifthFib;
-
     try {
-      const data = work();
+      const arg = getValueFor('main-thread');
+      const data = inefficientFibonacci(arg);
 
       result.innerText = data;
     } catch (e) {
@@ -57,21 +75,19 @@ document.getElementById('main-thread').onclick = () => {
 };
 
 document.getElementById('kelda').onclick = () => {
-  result.innerText = 'Working in Kelda...';
+  inKelda();
 
-  const work = () => {
-    function inefficientFibonacci(num) {
-      if (num === 0) return 0;
-      if (num === 1) return 1;
+  function inefficientFibonacci(num) {
+    if (num === 0) return 0;
+    if (num === 1) return 1;
 
-      return inefficientFibonacci(num - 1) + inefficientFibonacci(num - 2);
-    }
+    return inefficientFibonacci(num - 1) + inefficientFibonacci(num - 2);
+  }
 
-    return inefficientFibonacci(45);
-  };
+  const arg = getValueFor('func');
 
   kelda
-    .orderWork(work)
+    .orderWork(inefficientFibonacci, arg)
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
@@ -80,10 +96,12 @@ document.getElementById('kelda').onclick = () => {
 };
 
 document.getElementById('kelda-script').onclick = () => {
-  result.innerText = 'Working in Kelda...';
+  inKelda();
+
+  const arg = getValueFor('script');
 
   kelda
-    .orderWork({ url: '/js/fortyFifthFib.js' })
+    .orderWork({ url: '/js/fib.js' }, arg)
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
@@ -94,10 +112,10 @@ document.getElementById('kelda-script').onclick = () => {
 kelda
   .load({ url: '/js/fib.js' })
   .then(id => {
-    document.getElementById('kelda-parameterized').onclick = () => {
-      result.innerText = 'Working in Kelda...';
+    document.getElementById('kelda-cached').onclick = () => {
+      inKelda();
 
-      const arg = num.value;
+      const arg = getValueFor('cached');
 
       kelda
         .orderWork(id, arg)

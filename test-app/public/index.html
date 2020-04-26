@@ -17,10 +17,10 @@
     <section class="work">
       <div class="execute">
         Start the timer and then choose where to execute the work. It will try
-        to find the 45th fibonacci number using a non-optimized recursive
-        implementation. Notice how the timer freezes when running the work in
-        the main thread, but not when running in Kelda (unless your browser
-        doesn't support Web Workers).
+        to find the nth fibonacci number using a non-optimized recursive
+        algorithm. Notice how the timer freezes when running the work in the
+        main thread, but not when running in Kelda (unless your browser doesn't
+        support Web Workers).
       </div>
       <div>Result:</div>
       <div class="result" id="result">--</div>
@@ -28,6 +28,7 @@
         <div class="main-thread">
           <div class="bold">Main thread</div>
           Run in main thread, without Kelda
+          <select class="num" id="num-main-thread"></select>
           <button id="main-thread">
             Start
           </button>
@@ -36,16 +37,18 @@
           <div class="bold">Kelda</div>
           <div>
             Run from self-contained work function
+            <select class="num" id="num-func"></select>
             <button id="kelda">Start</button>
           </div>
           <div>
             Run from immediately-invoked remote module
+            <select class="num" id="num-script"></select>
             <button id="kelda-script">Start</button>
           </div>
           <div>
-            Run from parameterized and cached remote module
-            <select class="num" id="num"></select>
-            <button id="kelda-parameterized">Start</button>
+            Run from cached remote module
+            <select class="num" id="num-cached"></select>
+            <button id="kelda-cached">Start</button>
           </div>
         </div>
       </section>
