@@ -17,25 +17,37 @@ import longRunningCalculation from './longRunningCalculation';
 
 const options = { threadPoolDepth: 3 };
 const kelda = new Kelda(options);
-// Up to three jobs can be performed at once since a threadPoolDepth of 3 was specified.
+/*
+  Up to three jobs can be performed at once since a threadPoolDepth of 3 was specified.
+*/
 
 const result = await kelda.orderWork(longRunningCalculation);
-// longRunningCalculation runs in a Web Worker if available and in the main thread if not. Work functions you pass to Kelda *must* be entirely self-contained and cannot contain any references to variables from outside their scope.
+/*
+  longRunningCalculation runs in a Web Worker if available and in the main thread if not.
+
+  Work functions you pass to Kelda *must* be entirely self-contained and cannot contain any references to variables from outside their scope.
+*/
 
 const result2 = await kelda.orderWork({
   url: '/path/to/work/module',
   exportName: 'myWork'
 });
-// If your work function requires variables outside its scope (e.g. other modules), you may expose it as a remote module. Simply provide Kelda with the URL of the module and the name of the work export (defaults to "default")
+/*
+  If your work function requires variables outside its scope (e.g. other modules), you may expose it as a remote module.
+  Simply provide Kelda with the URL of the module and the name of the work export (defaults to "default")
+*/
 
 const eagerId = await kelda.load({ url: '/path/to/work/module' });
 const lazyId = kelda.lazy({ url: '/path/to/work/module' });
-// For ease of reuse, you may also load a remote work module direectly into Kelda in exchange for a work ID. You can then execute the work repeatedly using that work ID, passing different arguments as needed.
+/*
+  For ease of reuse, you may also load a remote work module direectly into Kelda in exchange for a work ID.
+  You can then execute the work repeatedly using that work ID, passing different arguments as needed.
+*/
 
 const result3 = await kelda.orderWork(eagerId, arg1, arg2);
 // Script is already loaded - eager
 const result4 = await kelda.orderWork(lazyId, arg1, arg2);
-// Script won't load until the first call to .orderWork with this ID - lazy
+// Script won't load until the first call to .orderWork() with this ID - lazy
 ```
 
 ## Goal
