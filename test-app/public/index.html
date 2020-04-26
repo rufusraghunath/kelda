@@ -26,18 +26,24 @@
       <div class="result" id="result">--</div>
       <section class="kelda-options">
         <div class="main-thread">
-          <div class="bold">Run in main thread</div>
-          <button id="main-thread">Start</button>
+          <div class="bold">Main thread</div>
+          Run in main thread, without Kelda
+          <button id="main-thread">
+            Start
+          </button>
         </div>
         <div>
-          <div class="bold">Run in Kelda</div>
-          <div>From work function <button id="kelda">Start</button></div>
+          <div class="bold">Kelda</div>
           <div>
-            From immediately-invoked script
+            Run from self-contained work function
+            <button id="kelda">Start</button>
+          </div>
+          <div>
+            Run from immediately-invoked remote module
             <button id="kelda-script">Start</button>
           </div>
           <div>
-            From cached script, with arg
+            Run from parameterized and cached remote module
             <select class="num" id="num"></select>
             <button id="kelda-parameterized">Start</button>
           </div>

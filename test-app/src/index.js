@@ -1,5 +1,5 @@
 import Kelda from 'kelda-js';
-import getFibWork from './getFibWork';
+import fortyFifthFib from './work/fortyFifthFib';
 
 const kelda = new Kelda();
 const num = document.getElementById('num');
@@ -42,7 +42,7 @@ document.getElementById('main-thread').onclick = () => {
   result.innerText = 'Working in main thread...';
 
   setTimeout(() => {
-    const work = getFibWork();
+    const work = fortyFifthFib;
 
     try {
       const data = work();
@@ -59,8 +59,19 @@ document.getElementById('main-thread').onclick = () => {
 document.getElementById('kelda').onclick = () => {
   result.innerText = 'Working in Kelda...';
 
+  const work = () => {
+    function inefficientFibonacci(num) {
+      if (num === 0) return 0;
+      if (num === 1) return 1;
+
+      return inefficientFibonacci(num - 1) + inefficientFibonacci(num - 2);
+    }
+
+    return inefficientFibonacci(45);
+  };
+
   kelda
-    .orderWork(getFibWork())
+    .orderWork(work)
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
@@ -72,7 +83,7 @@ document.getElementById('kelda-script').onclick = () => {
   result.innerText = 'Working in Kelda...';
 
   kelda
-    .orderWork('/js/hardcodedFib.js')
+    .orderWork({ url: '/js/fortyFifthFib.js' })
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
@@ -80,18 +91,21 @@ document.getElementById('kelda-script').onclick = () => {
     });
 };
 
-kelda.load('/js/parameterizedFib.js').then(id => {
-  document.getElementById('kelda-parameterized').onclick = () => {
-    result.innerText = 'Working in Kelda...';
+kelda
+  .load({ url: '/js/fib.js' })
+  .then(id => {
+    document.getElementById('kelda-parameterized').onclick = () => {
+      result.innerText = 'Working in Kelda...';
 
-    const arg = num.value;
+      const arg = num.value;
 
-    kelda
-      .orderWork(id, arg)
-      .then(data => (result.innerText = data))
-      .catch(e => {
-        console.error(e);
-        result.innerText = 'Error';
-      });
-  };
-});
+      kelda
+        .orderWork(id, arg)
+        .then(data => (result.innerText = data))
+        .catch(e => {
+          console.error(e);
+          result.innerText = 'Error';
+        });
+    };
+  })
+  .catch(console.log);

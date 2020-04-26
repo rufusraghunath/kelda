@@ -1,13 +1,16 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
-  entry: "./src/index.js",
-  devtool: "source-map",
+  entry: {
+    bundle: './src/index.js',
+    fib: './src/work/fib.js',
+    fortyFifthFib: './src/work/fortyFifthFib.js'
+  },
+  devtool: 'source-map',
   resolve: {
-    extensions: [".js", ".json", ".node"]
+    extensions: ['.js', '.json', '.node']
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "public/js")
+    path: path.resolve(__dirname, 'public/js')
   }
 };
