@@ -40,7 +40,7 @@ const result2 = await kelda.orderWork({
 const eagerId = await kelda.load({ url: '/path/to/work/module' });
 const lazyId = kelda.lazy({ url: '/path/to/work/module' });
 /*
-  For ease of reuse, you may also load a remote work module direectly into Kelda in exchange for a work ID.
+  For ease of reuse, you may also load a remote work module directly into Kelda in exchange for a work ID.
   You can then execute the work repeatedly using that work ID, passing different arguments as needed.
 */
 
