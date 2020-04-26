@@ -20,18 +20,53 @@ const kelda = new Kelda(options);
 // Up to three jobs can be performed at once since a threadPoolDepth of 3 was specified.
 
 const result = await kelda.orderWork(longRunningCalculation);
-// longRunningCalculation runs in a Web Worker if available and in the main thread if not.
+// longRunningCalculation runs in a Web Worker if available and in the main thread if not. Work functions you pass to Kelda *must* be entirely self-contained and cannot contain any references to variables from outside their scope.
+
+const result2 = await kelda.orderWork({
+  url: '/path/to/work/module',
+  exportName: 'myWork'
+});
+// If your work function requires variables outside its scope (e.g. other modules), you may expose it as a remote module. Simply provide Kelda with the URL of the module and the name of the work export (defaults to "default")
+
+const eagerId = await kelda.load({ url: '/path/to/work/module' });
+const lazyId = kelda.lazy({ url: '/path/to/work/module' });
+// For ease of reuse, you may also load a remote work module direectly into Kelda in exchange for a work ID. You can then execute the work repeatedly using that work ID, passing different arguments as needed.
+
+const result3 = await kelda.orderWork(eagerId, arg1, arg2);
+// Script is already loaded - eager
+const result4 = await kelda.orderWork(lazyId, arg1, arg2);
+// Script won't load until the first call to .orderWork with this ID - lazy
 ```
 
-## Limitations
+## Goal
 
-Currently, Kelda can only take orders for simple functions that do not internally reference any variables outside of their own scope. This is because work will be executed in a separate Worker thread, which has a separate context from the main thread.
+The purpose of the Kelda project is to provide a managed threadpool abstraction for the browser. It tries to use Web Workers under the hood, and falls back to computation in the main thread when this is not possible (although Workers are well-supported by browsers at this point).
 
-This also means that module imports don't currently work if you use a bundler like webpack (no usage of `import` or `require`), as the Worker thread has no reference to the bundler module resolution object.
+One or two similar solutions have been attempted (e.g. [fibrelite](https://github.com/jameslmilner/fibrelite)), but these fall short of being satisfactory because they provide too few features to be truly useful, and because they fail to solve the technical constraints (see below) inherent in Workers. For example, fibrelite:
 
-In other words, any work provided to Kelda must be entirely self-contained. This, of course, represents a serious limitation for testing and maintainability of these functions, and Kelda should be considered in "alpha" for the time being.
+- Is an abstraction over a single operation, so it cannot manage your entire Worker pool for you (it is possible to call `new Fibrelite(myFunction, threadPoolDepth).execute(args)` too many times and deplete the thread pool, leading to Bad Things).
+- Assumes the function passed to it can simply be stringified and turned into a data URI (this is false if the function references variables outside its own scope, including references to other modules)
+- Does not provide any functionality beyond the ability to schedule individual function calls on Worker threads
 
-The next phase of development will address this limitation and attempt to provide a solution. At that point, Kelda will be bumped to the first stable release at 1.0.0.
+Kelda aims to overcome these shortcomings by providing:
+
+- A global abstraction over Worker threads, thereby guaranteeing that the desired thread pool depth can never be exceeded at any given time
+- Solving the variable scoping issue or providing a satisfactory workaround (currently doing this by having the user create separate build outputs for their worker scripts)
+- Opt-in extensions, such as out-of-the box performance profiling that would allow developers to immediately gain insight into the tradeoffs of using Kelda for any given operation (Kelda could even potentially decide by itself which operations to move to Workers without the developer having to know about it)
+
+## Technical background
+
+JavaScript is [single-threaded](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Web Workers allow the developer to offload computationally-intensive tasks to separate threads so the main UI thread isn't blocked from doing other important work (e.g. responding to user interaction). Workers can communicate with the main thread via `postMessage` and with each other via `BroadcastChannel`.
+
+Workers do run on separate hardware threads, meaning that there is a hard limit to how many can be used at any one time. It is the responsibility of Kelda to manage the thread pool appropriately, e.g. using a sane default, a user-specified pool depth, or info from `navigator.hardwareConcurrency`.
+
+## Technical constraints
+
+The biggest technical constraints is that functions and therefore their closures cannot be passed to an existing Worker. Instead, a Worker must be initialized with a script to execute, which runs in a separate context from the main thread (i.e. `new Worker(pointerToScript|dataUri|blob)`). This means that:
+
+- Worker threads cannot be generic, reusable, or persistent (except in the case of cronjobs)
+- There is some performance overhead to creating and destroying Workers every time a job is requested
+- Variables that are out of scope of the work function cannot be referenced in the Worker context (including module imports). E.g. if I define a function `fibonacci` outside the scope of my work function, but my work function refers to `fibonacci`, then my work function will stringify to refer to `fibonacci` by name but won't have it available in the Worker. This is why we have to define separate build outputs for our worker scripts and pass the url to Kelda.
 
 ## Testing
 
