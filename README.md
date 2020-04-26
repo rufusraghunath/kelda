@@ -24,7 +24,6 @@ const kelda = new Kelda(options);
 const result = await kelda.orderWork(longRunningCalculation);
 /*
   longRunningCalculation runs in a Web Worker if available and in the main thread if not.
-
   Work functions you pass to Kelda *must* be entirely self-contained and cannot contain any references to variables from outside their scope.
 */
 
