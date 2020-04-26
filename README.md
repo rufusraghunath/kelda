@@ -34,6 +34,7 @@ const result2 = await kelda.orderWork({
 });
 /*
   If your work function requires variables outside its scope (e.g. other modules), you may expose it as a remote module.
+  The remote module can be any JS script that evaluates to an object in which Kelda can look for your work function.
   Simply provide Kelda with the URL of the module and the name of the work export (defaults to "default")
 */
 
