@@ -6,14 +6,7 @@ ObservableJob, using a generator to yield many results over time
 
 Global wrapper around all functions? Could optimize even frameworks like React
 
-- Use ML to drive optimization? Have a sandbox env that switches funcs from Worker to main thread and aggregates data to run regressions against
-- Could open source Worker optimization data for common libs, e.g. `moment`
-- How would one maintain the unique identifiers for functions?
-
-If we use something like a functional test for determining whether Worker-based optimization is worth it:
-
-- write quantum-level tests
-- use a tool like browser stack to determine device payoff matrix
+Using `Transferrable` to transfer ownership of large args to Workers - bing perf improvement. https://developer.mozilla.org/en-US/docs/Web/API/Transferable, https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
 
 How big is the Worker overhead, anyway? How frequently worth it?
 
