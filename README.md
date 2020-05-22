@@ -31,13 +31,15 @@ const kelda = new Kelda(options);
 
 const result = await kelda.orderWork(longRunningCalculation);
 // longRunningCalculation runs in a Web Worker if available and in the main thread if not.
-// Work functions you pass to Kelda *must* be entirely self-contained and cannot contain any references to variables from outside their scope.
+// Work functions you pass to Kelda *must* be entirely self-contained,
+// and cannot contain any references to variables from outside their scope.
 
 const result2 = await kelda.orderWork({
   url: '/path/to/work/module',
   exportName: 'myWork'
 });
-// If your work function requires variables outside its scope (e.g. other modules), you may expose it as a remote module.
+// If your work function requires variables outside its scope (e.g. other modules),
+// you may expose it as a remote module.
 // Simply provide Kelda with the URL of the script and the name of the work export (defaults to "default")
 
 const eagerId = await kelda.load({ url: '/path/to/work/module' });
