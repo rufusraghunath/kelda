@@ -11,6 +11,9 @@ describe('WorkerJob', () => {
   const numberScript = fs
     .readFileSync(path.join(__dirname, '../util/test/modules/number.js'))
     .toString();
+  const namedScript = fs
+    .readFileSync(path.join(__dirname, '../util/test/modules/named.js'))
+    .toString();
 
   it('should schedule work on a Web Worker', async () => {
     const workModule = new LocalWorkModule(work);
@@ -37,6 +40,15 @@ describe('WorkerJob', () => {
     const result = await job.execute();
 
     expect(result).toBe(3);
+  });
+
+  it('can handle named exports', async () => {
+    const workModule = new RemoteWorkModule(namedScript, 'add');
+    const job = new WorkerJob(workModule).with(8, 2);
+
+    const result = await job.execute();
+
+    expect(result).toBe(10);
   });
 
   it('should reject when something goes wrong during Worker initialization', async () => {

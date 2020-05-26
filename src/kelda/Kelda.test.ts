@@ -15,6 +15,7 @@ describe('Kelda', () => {
   const stringUrl = '/path/to/string/script';
   const booleanUrl = '/path/to/boolean/script';
   const argumentsUrl = '/path/to/arguments/script';
+  const namedUrl = '/path/to/named/script';
   const numberParams = { url: numberUrl };
   const stringParams = { url: stringUrl };
   const booleanParams = { url: booleanUrl };
@@ -31,6 +32,9 @@ describe('Kelda', () => {
     .toString();
   const argumentsScript = fs
     .readFileSync(path.join(__dirname, '../util/test/modules/arguments.js'))
+    .toString();
+  const namedScript = fs
+    .readFileSync(path.join(__dirname, '../util/test/modules/named.js'))
     .toString();
 
   beforeEach(() => {
@@ -89,6 +93,19 @@ describe('Kelda', () => {
       expect(result).toBe(30);
     });
 
+    it('handles named exports', async () => {
+      xhr.get(namedUrl, (_, res) => res.status(200).body(namedScript));
+
+      const kelda = new Kelda();
+      const result = await kelda.orderWork(
+        { url: namedUrl, exportName: 'add' },
+        8,
+        2
+      );
+
+      expect(result).toBe(10);
+    });
+
     it('when Workers are unavailable', async () => {
       xhr.get(numberUrl, (_, res) => res.status(200).body(numberScript));
       withoutWorkers();
@@ -116,10 +133,6 @@ describe('Kelda', () => {
       await expect(kelda.orderWork(numberParams)).rejects.toEqual(
         new KeldaError("Could not load work from url: '/path/to/number/script'")
       );
-    });
-
-    xit('handles named exports', () => {
-      // TODO
     });
   });
 
@@ -196,10 +209,6 @@ describe('Kelda', () => {
           )
         );
       });
-
-      xit('handles named exports', () => {
-        // TODO
-      });
     });
 
     describe('lazy loading', () => {
@@ -263,10 +272,6 @@ describe('Kelda', () => {
             "Could not load work from url: '/path/to/number/script'"
           )
         );
-      });
-
-      xit('handles named exports', () => {
-        // TODO
       });
     });
   });
