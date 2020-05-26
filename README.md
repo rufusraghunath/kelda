@@ -67,7 +67,7 @@ Due to the limitations of Web Workers, we cannot pass functions from the main th
 
 For most practical usecases, you will probably want to be able to reference variables outside of the scope of your work functions. Apart from allowing you to modulerize your code, this will also enable you to take advantage of the wider JS ecosystem (e.g. using npm modules, or TypeScript). In this case, you cannot pass a function directly to Kelda - instead, you'll have to use a remote work module.
 
-_\*Important note: do not ever put dynamic, user-generated content into a work module. Due to the nature of `eval` this is a potential cross-site scripting attack vector._
+_\*Important note: do not ever put dynamic, user-generated content into a work module. Due to the nature of `eval` this is a potential cross-site scripting attack vector. If you need to pass user-generated content to Kelda, do so by passing the content as arguments to `kelda.orderWork()`._
 
 ### Bundling remote work modules
 
