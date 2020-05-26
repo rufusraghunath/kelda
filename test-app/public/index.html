@@ -47,13 +47,7 @@
                 <button id="kelda">Start</button>
               </div>
             </div>
-            <div class="flex">
-              Run from immediately-invoked remote module
-              <div class="buttons">
-                <select class="num" id="num-script"></select>
-                <button id="kelda-script">Start</button>
-              </div>
-            </div>
+
             <div class="flex">
               Run from eagerly loaded and cached remote module
               <div class="buttons">
@@ -66,6 +60,18 @@
               <div class="buttons">
                 <select class="num" id="num-lazy"></select>
                 <button id="kelda-lazy">Start</button>
+              </div>
+            </div>
+            <div class="flex">
+              Run from immediately-invoked remote module
+              <div class="buttons">
+                <select id="export-name-script">
+                  <option>default</option>
+                  <option>inefficientFibonacci</option>
+                  <option>invalidName</option>
+                </select>
+                <select class="num" id="num-script"></select>
+                <button id="kelda-script">Start</button>
               </div>
             </div>
           </div>

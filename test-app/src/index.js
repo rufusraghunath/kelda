@@ -5,16 +5,16 @@ function inKelda() {
   result.innerText = 'Working in Kelda...';
 }
 
-function getSelect(idSuffix) {
+function getArgSelect(idSuffix) {
   return document.getElementById(`num-${idSuffix}`);
 }
 
-function getValueFor(idSuffix) {
-  return parseInt(getSelect(idSuffix).value, 10);
+function getArgFor(idSuffix) {
+  return parseInt(getArgSelect(idSuffix).value, 10);
 }
 
 function fillSelectFor(idSuffix) {
-  const select = getSelect(idSuffix);
+  const select = getArgSelect(idSuffix);
 
   Array(46)
     .fill(null)
@@ -63,7 +63,7 @@ document.getElementById('main-thread').onclick = () => {
 
   setTimeout(() => {
     try {
-      const arg = getValueFor('main-thread');
+      const arg = getArgFor('main-thread');
       const data = inefficientFibonacci(arg);
 
       result.innerText = data;
@@ -85,7 +85,7 @@ document.getElementById('kelda').onclick = () => {
     return inefficientFibonacci(num - 1) + inefficientFibonacci(num - 2);
   }
 
-  const arg = getValueFor('func');
+  const arg = getArgFor('func');
 
   kelda
     .orderWork(inefficientFibonacci, arg)
@@ -99,13 +99,15 @@ document.getElementById('kelda').onclick = () => {
 document.getElementById('kelda-script').onclick = () => {
   inKelda();
 
-  const arg = getValueFor('script');
+  const arg = getArgFor('script');
+  const exportName = document.getElementById('export-name-script').value;
 
   kelda
-    .orderWork({ url: '/js/fib.js' }, arg)
+    .orderWork({ url: '/js/fib.js', exportName }, arg)
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
+      alert(e);
       result.innerText = 'Error';
     });
 };
@@ -116,13 +118,14 @@ kelda
     document.getElementById('kelda-eager').onclick = () => {
       inKelda();
 
-      const arg = getValueFor('eager');
+      const arg = getArgFor('eager');
 
       kelda
         .orderWork(id, arg)
         .then(data => (result.innerText = data))
         .catch(e => {
           console.error(e);
+          alert(e);
           result.innerText = 'Error';
         });
     };
@@ -134,13 +137,14 @@ const lazyId = kelda.lazy({ url: '/js/fib.js' });
 document.getElementById('kelda-lazy').onclick = () => {
   inKelda();
 
-  const arg = getValueFor('lazy');
+  const arg = getArgFor('lazy');
 
   kelda
     .orderWork(lazyId, arg)
     .then(data => (result.innerText = data))
     .catch(e => {
       console.error(e);
+      alert(e);
       result.innerText = 'Error';
     });
 };
