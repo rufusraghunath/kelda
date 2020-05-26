@@ -35,14 +35,14 @@ class ThreadPool {
   }
 
   private doFromQueue() {
-    const enqueued = this.queue.shift();
-    // this currently gets lost if there's no thread available. Should go through .schedule instead.
+    const thread = this.getThread();
 
-    if (enqueued) {
-      const [job, resolve, reject] = enqueued;
+    if (thread && this.queue.length) {
+      const enqueued = this.queue.shift();
+      const [job, resolve, reject] = enqueued!;
 
-      this.getThread()
-        ?.do(job)
+      thread
+        .do(job)
         .then(resolve)
         .catch(reject) // TODO: should re-enqueue/retry on failure? How many times?
         .finally(this.doFromQueue);
