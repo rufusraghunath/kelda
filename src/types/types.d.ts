@@ -2,7 +2,12 @@ type Resolve = (result?: any) => void;
 type Reject = (error?: Error) => void;
 type Work<T> = (...args: any[]) => T;
 
+interface RemoteModule<T> {
+  [key: string]: Work<T>;
+}
+
 interface WorkModule<T> {
+  exportName: string | null;
   get: () => Work<T>;
   toString: () => string;
 }

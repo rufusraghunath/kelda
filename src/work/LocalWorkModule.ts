@@ -1,4 +1,5 @@
 class LocalWorkModule<T> implements WorkModule<T> {
+  public readonly exportName = 'default';
   private work: Work<T>;
 
   constructor(source: Work<T>) {
@@ -6,13 +7,15 @@ class LocalWorkModule<T> implements WorkModule<T> {
   }
 
   public get(): Work<T> {
-    // for MainThreadJobs
     return this.work;
   }
 
   public toString(): string {
-    // for WorkerJobs
-    return `${this.work}`;
+    return `function(){
+      return {
+        default: ${this.work}
+      }
+    }`;
   }
 }
 

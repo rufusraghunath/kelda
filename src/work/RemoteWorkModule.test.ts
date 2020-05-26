@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import RemoteWorkModule from './RemoteWorkModule';
 
-describe('WorkContainer', () => {
+describe('RemoteWorkModule', () => {
   const numberScript = fs
     .readFileSync(path.join(__dirname, '../util/test/modules/number.js'))
     .toString();
@@ -15,11 +15,18 @@ describe('WorkContainer', () => {
     expect(work()).toBe(30);
   });
 
-  it('provides a custom .toString() for WorkerJobs', () => {
-    const expected = `(function() {
+  it('provides a custom .toString() that returns the remote module for WorkerJobs', () => {
+    const expected = `function(){
       return ${numberScript}
-    })()["default"]`;
+    }`;
 
     expect(`${remoteWorkModule}`).toBe(expected);
+  });
+
+  it('returns exportName passed to it in constructor', () => {
+    expect(remoteWorkModule.exportName).toBe('default');
+    expect(new RemoteWorkModule(numberScript, 'someName').exportName).toBe(
+      'someName'
+    );
   });
 });

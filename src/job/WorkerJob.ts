@@ -4,6 +4,8 @@ enum KeldaWorkerEvent {
   ERROR = '$$_KELDA_ERROR'
 }
 
+type RemoteModuleProvider<T> = () => RemoteModule<T>;
+
 interface KeldaWorkerMessage<T> {
   type: KeldaWorkerEvent;
   result?: T;
@@ -106,7 +108,11 @@ class WorkerJob<T> implements Job<T> {
 
     // Coverage cannot be collected from the init function as it is stringified and eval'd
     /* istanbul ignore next */
-    const init = (work: Work<T>, args: any[]) => {
+    const init = (
+      provider: RemoteModuleProvider<T>,
+      exportName: string,
+      args: any[]
+    ) => {
       let isDone = false;
       //@ts-ignore:
       self.onmessage = message => {
@@ -115,16 +121,27 @@ class WorkerJob<T> implements Job<T> {
             // TODO: use await instead of 'result instanceof Promise'
             // This is currently an issue as await transpiles to some
             // TS helpers that don't exist in the MockWorker eval scope
-            //@ts-ignore:
 
-            let boundWork = work;
+            const module = provider();
 
-            args.forEach(arg => {
-              boundWork = boundWork.bind(null, arg);
-              // Can't use spread operator for work.call(null, ...args)
-              // This is another TS helper issue
-            });
+            if (typeof module !== 'object') {
+              throw new Error(
+                'Provided work script did not evaluate to a module object'
+              );
+            }
 
+            const work = provider()[exportName];
+
+            if (!work) {
+              throw new Error(
+                `Export '${exportName}' was not found in provided work module`
+              );
+            }
+
+            const boundWork = args.reduce(
+              (acc, arg) => acc.bind(null, arg),
+              work
+            );
             const result = boundWork.call(null);
 
             if (result instanceof Promise) {
@@ -155,7 +172,7 @@ class WorkerJob<T> implements Job<T> {
       };
     };
 
-    return `(${init})(${this.workModule}, [${this.args}])`;
+    return `(${init})(${this.workModule}, "${this.workModule.exportName}", [${this.args}])`;
   }
 }
 

@@ -1,10 +1,6 @@
-interface RemoteModule<T> {
-  [key: string]: Work<T>;
-}
-
 class RemoteWorkModule<T> implements WorkModule<T> {
+  public readonly exportName: string;
   private source: string;
-  private exportName: string;
 
   constructor(source: string, exportName: string) {
     this.source = source;
@@ -21,11 +17,11 @@ class RemoteWorkModule<T> implements WorkModule<T> {
 
   public toString(): string {
     // needed to prevent issues when last char of source is ;
-    const wrapped = `function() {
+    const wrapped = `function(){
       return ${this.source}
     }`;
 
-    return `(${wrapped})()["${this.exportName}"]`;
+    return `${wrapped}`;
   }
 }
 

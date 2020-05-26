@@ -49,11 +49,29 @@ describe('WorkerJob', () => {
     );
   });
 
-  it('should reject when Worker an error is thrown while executing work', async () => {
+  it('should reject when an error is thrown while executing work', async () => {
     const workModule = new LocalWorkModule(errorWork);
 
     await expect(new WorkerJob(workModule).execute()).rejects.toEqual(
       new Error('The work failed')
+    );
+  });
+
+  it('should reject when work script is not a module', async () => {
+    const workModule = new RemoteWorkModule('false', 'default');
+
+    await expect(new WorkerJob(workModule).execute()).rejects.toEqual(
+      new Error('Provided work script did not evaluate to a module object')
+    );
+  });
+
+  it('should reject when an invalid exportName is provided', async () => {
+    const workModule = new RemoteWorkModule(numberScript, 'invalidExportName');
+
+    await expect(new WorkerJob(workModule).execute()).rejects.toEqual(
+      new Error(
+        "Export 'invalidExportName' was not found in provided work module"
+      )
     );
   });
 

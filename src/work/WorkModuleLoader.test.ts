@@ -55,19 +55,4 @@ describe('WorkLoader', () => {
       new KeldaError("Could not load work from url: '/path/to/number/script'")
     );
   });
-
-  xit('throws if script does not return a function', async () => {
-    // TODO: figure out what to do with this
-    const brokenScript = 'false;';
-
-    xhr.get(numberUrl, (_, res) => res.status(200).body(brokenScript));
-
-    const loader = new WorkModuleLoader(numberUrl, 'default');
-
-    await expect(loader.get()).rejects.toEqual(
-      new KeldaError(
-        "Script did not return a work function: '/path/to/number/script'"
-      )
-    );
-  });
 });
