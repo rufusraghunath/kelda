@@ -1,5 +1,11 @@
 ## Open questions
 
+Can we use Deno's bundle capabilty to build work scripts? Kit mentioned that Deno compiles to ECMAScript modules.
+
+Chrome 80 supports module Workers out of the box, using `type: 'module'`. In the future, Kelda could use this intead of forcing users to maintain a build chain that compiles to evalable modules. https://web.dev/module-workers/
+
+Deno uses Web Workers for threading, using the `type: 'module'` option. How can Kenda support this? https://deno.land/manual/runtime/workers
+
 How to deal with TS types for work args?
 
 ObservableJob, using a generator to yield many results over time
