@@ -142,6 +142,7 @@ class WorkerJob<T> implements Job<T> {
               (acc, arg) => acc.bind(null, arg),
               work
             );
+
             const result = boundWork.call(null);
 
             if (result instanceof Promise) {
