@@ -10,9 +10,7 @@ How to deal with TS types for work args?
 
 ObservableJob, using a generator to yield many results over time
 
-Global wrapper around all functions? Could optimize even frameworks like React
-
-Using `Transferrable` to transfer ownership of large args to Workers - bing perf improvement. https://developer.mozilla.org/en-US/docs/Web/API/Transferable, https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
+Using `Transferrable` to transfer ownership of large args to Workers - big perf improvement. https://developer.mozilla.org/en-US/docs/Web/API/Transferable, https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers
 
 How big is the Worker overhead, anyway? How frequently worth it?
 
