@@ -33,4 +33,4 @@ To publish to the local registry shim, run `npm run local-registry:publish`. Thi
 
 To start the test app, run `npm run test-app`. This will pull the latest changes to Kelda from your local Verdaccio, build the test app, and start a server for the test app on port `8080`. Note that Verdaccio has to be running for this to work (`npm run local-registry`).
 
-In the future, the test app will support a simple browser-based functional test to provide automated regression assurance before publishing.
+In the future, the test app may support a simple browser-based functional test to provide automated regression assurance before publishing.

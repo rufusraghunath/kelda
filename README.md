@@ -149,13 +149,7 @@ module.exports = {
 
 The purpose of the Kelda project is to provide a managed threadpool abstraction for the browser. It tries to use Web Workers under the hood, and falls back to computation in the main thread when this is not possible (although Workers are well-supported by browsers at this point).
 
-One or two similar solutions have been attempted (e.g. [fibrelite](https://github.com/jameslmilner/fibrelite)), but these fall short of being satisfactory because they provide too few features to be truly useful, and because they fail to solve the technical constraints (see below) inherent in Workers. For example, fibrelite:
-
-- Is an abstraction over a single operation, so it cannot manage your entire Worker pool for you (it is possible to call `new Fibrelite(myFunction, threadPoolDepth).execute(args)` too many times and deplete the thread pool, leading to Bad Things).
-- Assumes the function passed to it can simply be stringified and turned into a data URI (this is false if the function references variables outside its own scope, including references to other modules)
-- Does not provide any functionality beyond the ability to schedule individual function calls on Worker threads
-
-Kelda aims to overcome these shortcomings by providing:
+One or two similar solutions have been attempted (e.g. [fibrelite](https://github.com/jameslmilner/fibrelite)), but these fall short of being satisfactory because they provide too few features to be truly useful, and because they fail to solve the technical constraints inherent in Workers. Kelda aims to overcome these shortcomings by providing:
 
 - A global abstraction over Worker threads, thereby guaranteeing that the desired thread pool depth can never be exceeded at any given time
 - Solving the variable scoping issue or providing a satisfactory workaround (currently doing this by having the user create separate build outputs for their worker scripts)
