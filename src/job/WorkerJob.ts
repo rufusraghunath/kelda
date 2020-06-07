@@ -138,12 +138,7 @@ class WorkerJob<T> implements Job<T> {
               );
             }
 
-            const boundWork = args.reduce(
-              (acc, arg) => acc.bind(null, arg),
-              work
-            );
-
-            const result = boundWork.call(null);
+            const result = work.apply(null, args);
 
             if (result instanceof Promise) {
               result.then(unwrappedResult => {
@@ -172,6 +167,12 @@ class WorkerJob<T> implements Job<T> {
         }
       };
     };
+
+    // TODO:
+    // .toString() doesn't always work
+    // [].toString() === ""
+    // "n".toString will remove quotes
+    // {}.toString() === [object Object]
 
     return `(${init})(${this.workModule}, "${this.workModule.exportName}", [${this.args}])`;
   }
