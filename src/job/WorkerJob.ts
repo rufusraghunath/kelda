@@ -15,9 +15,9 @@ interface KeldaWorkerMessage<T> {
 class WorkerJob<T> implements Job<T> {
   public isDone: boolean = false;
   private worker: Worker | null = null;
+  private args: any[] = [];
   private workModule: WorkModule<T>;
   private url?: string;
-  private args?: any[];
 
   constructor(workModule: WorkModule<T>) {
     /*
@@ -30,7 +30,7 @@ class WorkerJob<T> implements Job<T> {
     this.workModule = workModule;
   }
 
-  public with(...args: any[]): Job<T> {
+  public with(args: any[]): Job<T> {
     this.args = args;
     return this;
   }
@@ -68,7 +68,7 @@ class WorkerJob<T> implements Job<T> {
   }
 
   private startWork(): void {
-    this.worker?.postMessage({ type: KeldaWorkerEvent.START });
+    this.worker?.postMessage({ type: KeldaWorkerEvent.START, args: this.args });
   }
 
   private initWorkerMessageHandling(resolve: Resolve, reject: Reject): void {
@@ -108,11 +108,7 @@ class WorkerJob<T> implements Job<T> {
 
     // Coverage cannot be collected from the init function as it is stringified and eval'd
     /* istanbul ignore next */
-    const init = (
-      provider: RemoteModuleProvider<T>,
-      exportName: string,
-      args: any[]
-    ) => {
+    const init = (provider: RemoteModuleProvider<T>, exportName: string) => {
       let isDone = false;
       //@ts-ignore:
       self.onmessage = message => {
@@ -138,6 +134,7 @@ class WorkerJob<T> implements Job<T> {
               );
             }
 
+            const args = message.data?.args || [];
             const result = work.apply(null, args);
 
             if (result instanceof Promise) {
@@ -168,13 +165,7 @@ class WorkerJob<T> implements Job<T> {
       };
     };
 
-    // TODO:
-    // .toString() doesn't always work
-    // [].toString() === ""
-    // "n".toString will remove quotes
-    // {}.toString() === [object Object]
-
-    return `(${init})(${this.workModule}, "${this.workModule.exportName}", [${this.args}])`;
+    return `(${init})(${this.workModule}, "${this.workModule.exportName}")`;
   }
 }
 

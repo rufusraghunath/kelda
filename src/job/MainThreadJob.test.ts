@@ -16,6 +16,10 @@ describe('MainThreadJob', () => {
     .readFileSync(path.join(__dirname, '../util/test/modules/number.js'))
     .toString();
 
+  const typesScript = fs
+    .readFileSync(path.join(__dirname, '../util/test/modules/types.js'))
+    .toString();
+
   beforeEach(() => {
     withoutWorkers();
   });
@@ -49,11 +53,26 @@ describe('MainThreadJob', () => {
 
   it('can apply args to work', async () => {
     const workModule = new LocalWorkModule(addWork);
-    const job = new MainThreadJob(workModule).with(1, 2);
+    const job = new MainThreadJob(workModule).with([1, 2]);
 
     const result = await job.execute();
 
     expect(result).toBe(3);
+  });
+
+  it('can apply various types of args to work', async () => {
+    const workModule = new RemoteWorkModule(typesScript, 'default');
+    const job = new MainThreadJob(workModule).with([
+      1,
+      [],
+      [1, 2, 3],
+      {},
+      { hello: 'world' }
+    ]);
+
+    const result = await job.execute();
+
+    expect(result).toBe(true);
   });
 
   it('should reject when an error is thrown while executing work', async () => {

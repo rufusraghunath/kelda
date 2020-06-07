@@ -1,13 +1,13 @@
 class MainThreadJob<T> implements Job<T> {
-  private workModule: WorkModule<T>;
-  private args: any[] = [];
   public isDone: boolean = false;
+  private args: any[] = [];
+  private workModule: WorkModule<T>;
 
   constructor(work: WorkModule<T>) {
     this.workModule = work;
   }
 
-  public with(...args: any[]): Job<T> {
+  public with(args: any[]): Job<T> {
     this.args = args;
     return this;
   }

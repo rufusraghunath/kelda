@@ -14,7 +14,7 @@ interface WorkModule<T> {
 
 interface Job<T> {
   isDone: boolean;
-  with: (...args: any[]) => Job<T>;
+  with: (args: any[]) => Job<T>;
   execute: () => Promise<T>;
 }
 

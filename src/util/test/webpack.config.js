@@ -7,7 +7,8 @@ module.exports = {
     boolean: path.resolve(__dirname, './boolean.js'),
     number: path.resolve(__dirname, './number.js'),
     string: path.resolve(__dirname, './string.js'),
-    named: path.resolve(__dirname, './named.js')
+    named: path.resolve(__dirname, './named.js'),
+    types: path.resolve(__dirname, './types.js')
   },
   resolve: {
     extensions: ['.js']

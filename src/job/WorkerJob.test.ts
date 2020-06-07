@@ -14,6 +14,9 @@ describe('WorkerJob', () => {
   const namedScript = fs
     .readFileSync(path.join(__dirname, '../util/test/modules/named.js'))
     .toString();
+  const typesScript = fs
+    .readFileSync(path.join(__dirname, '../util/test/modules/types.js'))
+    .toString();
 
   it('should schedule work on a Web Worker', async () => {
     const workModule = new LocalWorkModule(work);
@@ -35,16 +38,31 @@ describe('WorkerJob', () => {
 
   it('can apply args to work', async () => {
     const workModule = new LocalWorkModule(addWork);
-    const job = new WorkerJob(workModule).with(1, 2);
+    const job = new WorkerJob(workModule).with([1, 2]);
 
     const result = await job.execute();
 
     expect(result).toBe(3);
   });
 
+  it('can apply various types of args to work', async () => {
+    const workModule = new RemoteWorkModule(typesScript, 'default');
+    const job = new WorkerJob(workModule).with([
+      1,
+      [],
+      [1, 2, 3],
+      {},
+      { hello: 'world' }
+    ]);
+
+    const result = await job.execute();
+
+    expect(result).toBe(true);
+  });
+
   it('can handle named exports', async () => {
     const workModule = new RemoteWorkModule(namedScript, 'add');
-    const job = new WorkerJob(workModule).with(8, 2);
+    const job = new WorkerJob(workModule).with([8, 2]);
 
     const result = await job.execute();
 
