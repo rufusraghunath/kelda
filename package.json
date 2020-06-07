@@ -1,6 +1,6 @@
 {
   "name": "kelda-js",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "Rufus Raghunath",
   "description": "A thread pool for the browser, built on top of Web Workers",
   "license": "MIT",
