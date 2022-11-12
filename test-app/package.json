@@ -15,7 +15,7 @@
     "express": "^4.17.1",
     "kelda-js": "^0.5.1",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
     "terser-webpack-plugin": "^3.0.1"
